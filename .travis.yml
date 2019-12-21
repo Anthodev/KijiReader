@@ -35,6 +35,7 @@ install:
   - php -r "echo ini_get('memory_limit').PHP_EOL;"
   # install or update
   - composer $ACTION
+  - composer update
   # - ./bin/phpunit install
 
 script:
