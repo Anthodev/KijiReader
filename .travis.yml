@@ -17,6 +17,8 @@ matrix:
   fast_finish: true
   include:
     - php: 7.2
+      env: SYMFONY="5.0.*"
+           ACTION="update"
     - php: 7.3
       env: SYMFONY="5.0.*"
            ACTION="update"
@@ -35,7 +37,6 @@ install:
   - php -r "echo ini_get('memory_limit').PHP_EOL;"
   # install or update
   - composer $ACTION
-  - composer update
   # - ./bin/phpunit install
 
 script:
