@@ -5,7 +5,7 @@ cache:
   yarn: true
   directories:
     - $HOME/.composer/cache/files
-    # - ./bin/.phpunit
+    - ./bin/.phpunit
 
 env:
   global:
