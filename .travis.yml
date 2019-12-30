@@ -13,6 +13,9 @@ env:
     - SYMFONY_DEPRECATIONS_HELPER=0
     - ACTION="install"
 
+services:
+  - mysql
+
 matrix:
   fast_finish: true
   include:
@@ -38,6 +41,9 @@ install:
   # install or update
   - composer $ACTION
   # - ./bin/phpunit install
+  - php bin/console doctrine:database:create --env=test
+  - php bin/console doctrine:migrations:migrate --env=test
+  - php bin/console doctrine:fixtures:load -n --env=test
 
 script:
   # - ./bin/phpunit
