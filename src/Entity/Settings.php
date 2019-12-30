@@ -9,6 +9,14 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Settings
 {
+    public function __construct()
+    {
+        $this->viewFlux = 1;
+        $this->viewArticle = 0;
+        $this->orderArticle = 0;
+        $this->displayUnread = true;
+    }
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()

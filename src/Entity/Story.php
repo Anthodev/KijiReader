@@ -9,6 +9,12 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Story
 {
+    public function __construct()
+    {
+        $this->starred = false;
+        $this->seen = false;
+    }
+    
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
