@@ -25,12 +25,14 @@ class AppFixtures extends Fixture
         $role->setName('User');
         $role->setCode('ROLE_USER');
         $role->setCreatedAt(new \DateTime());
+        $role->setUpdatedAt(new \DateTime());
         $manager->persist($role);
 
         $role = new Role();
         $role->setName('Admin');
         $role->setCode('ROLE_ADMIN');
         $role->setCreatedAt(new \DateTime());
+        $role->setUpdatedAt(new \DateTime());
         $manager->persist($role);
 
         $manager->flush();
