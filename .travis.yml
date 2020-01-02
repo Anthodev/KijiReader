@@ -48,7 +48,8 @@ install:
 
 script:
   # - ./bin/phpunit
-  - phpunit tests
+  # - phpunit tests
+  - ./vendor/bin/simple-phpunit tests
   # this checks that the source code follows the Symfony Code Syntax rules
   # - '[[ "$TRAVIS_PHP_VERSION" == "7.3" ]] || ./vendor/bin/php-cs-fixer fix --diff --dry-run -v'
   # this checks that the YAML config files contain no syntax errors
