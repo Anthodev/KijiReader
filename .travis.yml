@@ -47,8 +47,6 @@ install:
   - php bin/console doctrine:fixtures:load -n --env=test
 
 script:
-  # - ./bin/phpunit
-  # - phpunit tests
   - ./vendor/bin/simple-phpunit tests
   # this checks that the source code follows the Symfony Code Syntax rules
   # - '[[ "$TRAVIS_PHP_VERSION" == "7.3" ]] || ./vendor/bin/php-cs-fixer fix --diff --dry-run -v'

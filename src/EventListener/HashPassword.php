@@ -3,7 +3,7 @@
 namespace App\EventListener;
 
 use App\Entity\User;
-use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class HashPassword

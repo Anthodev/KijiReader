@@ -2,7 +2,7 @@
 
 namespace App\EventListener;
 
-use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 
 class AppSetData
 {
