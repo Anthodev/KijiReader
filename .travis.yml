@@ -5,13 +5,16 @@ cache:
   yarn: true
   directories:
     - $HOME/.composer/cache/files
-    # - ./bin/.phpunit
+    - ./bin/.phpunit
 
 env:
   global:
     # - SYMFONY_PHPUNIT_DIR=./bin/.phpunit
     - SYMFONY_DEPRECATIONS_HELPER=0
     - ACTION="install"
+
+services:
+  - mysql
 
 matrix:
   fast_finish: true
@@ -37,10 +40,14 @@ install:
   - php -r "echo ini_get('memory_limit').PHP_EOL;"
   # install or update
   - composer $ACTION
-  # - ./bin/phpunit install
+  # - php bin/phpunit install
+  - php bin/console doctrine:database:create --env=test
+  # - php bin/console doctrine:migrations:migrate --env=test
+  - php bin/console doctrine:schema:update --force --env=test
+  - php bin/console doctrine:fixtures:load -n --env=test
 
 script:
-  # - ./bin/phpunit
+  - ./vendor/bin/simple-phpunit tests
   # this checks that the source code follows the Symfony Code Syntax rules
   # - '[[ "$TRAVIS_PHP_VERSION" == "7.3" ]] || ./vendor/bin/php-cs-fixer fix --diff --dry-run -v'
   # this checks that the YAML config files contain no syntax errors
