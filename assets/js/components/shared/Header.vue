@@ -1,7 +1,7 @@
 <template>
     <div id="header" class="fixed-top">
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark" role="navigation">
-            <a href="#" class="navbar-brand">KijiReader</a>
+            <router-link to="/" class="navbar-brand">KijiReader</router-link>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -12,9 +12,9 @@
                     <li class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Account</a>
                         <div class="dropdown-menu dropdown-menu-right text-right">
-                            <a href="#" class="dropdown-item">Profile</a>
-                            <a href="#" class="dropdown-item">Settings</a>
-                            <a href="#" class="dropdown-item">Manage subscriptions</a>
+                            <router-link to="/feed" class="dropdown-item">Profile</router-link>
+                            <router-link to="/feed" class="dropdown-item">Settings</router-link>
+                            <router-link to="/feed" class="dropdown-item">Manage subscriptions</router-link>
                         </div>
                     </li>
                 </ul>

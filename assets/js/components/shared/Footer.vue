@@ -1,6 +1,19 @@
 <template>
   <div id="footer" class="fixed-bottom">
-    <span>Footer</span>
+    <div class="container">
+      <div class="footer-block">
+        <ul class="list-group">
+          <li class="list-group-item">Contact us</li>
+          <li class="list-group-item">Privacy Policy</li>
+        </ul>
+      </div>
+      <div class="footer-block">
+        <ul class="list-group">
+          <li class="list-group-item">KijiReader on Github</li>
+          <li class="list-group-item">Twitter</li>
+        </ul>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -15,7 +28,21 @@
 </script>
 
 <style scoped>
-  body {
-    background-color: black;
+  #footer {
+    background-color: #202120;
+    height: 8rem;
+    padding: 1rem;
+  }
+
+  #footer .container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    width: 50%;
+  }
+
+  .footer-block {
+    flex-grow: 1;
+    text-transform: uppercase;
   }
 </style>
