@@ -1,9 +1,8 @@
-import Feed from './components/feedPage/FeedPane.vue';
-import SideS from './components/shared/Sidebar.vue';
+import Feed from './components/feedPage/FeedPane.vue'
 
 export const routes = [
-    { path: '*', component: Feed },
-    { path: '/feed', component: SideS },
-];
-
-console.log('router enabled');
+    { path: '', name: 'home', components: {
+        default: Feed
+    } },
+    { path: '*', redirect: '/' },
+]

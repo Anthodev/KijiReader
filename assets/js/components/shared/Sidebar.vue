@@ -10,9 +10,9 @@
         </div>
         <hr>
         <div id="sidebarMenu">
-            <div class="menuElement"><span><font-awesome-icon icon="fa-home" /> Home</span></div>
-            <div class="menuElement"><span>Starred</span></div>
-            <div class="menuElement"><span>Bookmarked</span></div>
+            <div class="menuElement"><span><font-awesome-icon :icon="['fas', 'home']" /> Home</span></div>
+            <div class="menuElement"><span><font-awesome-icon :icon="['fas', 'star']" /> Starred</span></div>
+            <div class="menuElement"><span><font-awesome-icon :icon="['fas', 'bookmark']" /> Bookmarked</span></div>
         </div>
     </div>
 </template>

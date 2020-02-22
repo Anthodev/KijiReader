@@ -55,6 +55,10 @@ Encore
         config.corejs = 3;
     })
 
+    .configureBabel(function(babelConfig) {}, {
+        includeNodeModules: ['babel-preset-stage-2']
+    })
+
     // enables Sass/SCSS support
     // .enableSassLoader()
 

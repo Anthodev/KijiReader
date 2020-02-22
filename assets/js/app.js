@@ -5,38 +5,45 @@
  * (and its CSS file) in your base layout (base.html.twig).
  */
 
-import Vue from 'vue';
-import VueResource from 'vue-resource';
-import VueRouter from 'vue-router';
-import App from './App.vue';
-import { routes } from './routes.js';
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { faIcons } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import Vue from 'vue'
+import Vuex from 'vuex'
+import VueRouter from 'vue-router'
+import App from './App.vue'
 
-library.add(faIcons);
+import { store } from './store/store.js'
+import { routes } from './routes.js'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faHome, faStar, faBookmark } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
-Vue.use(VueResource);
-Vue.use(VueRouter);
+library.add(faHome)
+library.add(faStar)
+library.add(faBookmark)
 
-Vue.component('font-awesome-icon', FontAwesomeIcon);
+Vue.use(Vuex)
+Vue.use(VueRouter)
 
-Vue.http.options.root = 'https://docker.app.localhost';
-Vue.http.headers.common['Content-Type'] = 'application/json';
+Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 // any CSS you import will output into a single css file (app.css in this case)
-import '../css/app.css';
+import '../css/app.css'
 
 // Need jQuery? Install it with "yarn add jquery", then uncomment to import it.
 // import $ from 'jquery';
 
 const router = new VueRouter({
     routes,
-    mode: 'history'
-});
+    mode: 'history',
+    scrollBehavior(to, from, savedPosition) {
+        if (savedPosition) return savedPosition;
+        if (to.hash) return { selector: to.hash };
+        return { x: 0, y: 0 };
+    }
+})
 
 new Vue({
     el: '#app',
+    store,
     router,
     render: h => h(App)
-});
+})
