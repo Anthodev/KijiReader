@@ -19,9 +19,6 @@ services:
 matrix:
   fast_finish: true
   include:
-    - php: 7.2
-      env: SYMFONY="5.0.*"
-          #  ACTION="update"
     - php: 7.3
       env: SYMFONY="5.0.*"
           #  ACTION="update"
