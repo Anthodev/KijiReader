@@ -62,6 +62,9 @@ class UserController extends AbstractController
         $user->setPlainPassword($password);
 
         $settings = new Settings();
+        $settings->setUser($user);
+        $em->persist($settings);
+
         $user->setSettings($settings);
 
         $role = $this->getUserRole($roleUser, $roleRepository, $em);
@@ -80,11 +83,11 @@ class UserController extends AbstractController
 
     public function getUserRole($roleCode, $roleRepository, $em)
     {
-        $role = $roleRepository->findOneByCode($roleCode);
+        $role = $roleRepository->findOneByName($roleCode);
         if (is_null($role)) {
             $role = new Role();
 
-            if ($roleCode === 'ROLE_USER') {
+            if ($roleCode === 'User') {
                 $role->setName('User');
                 $role->setCode('ROLE_USER');
             } else {
