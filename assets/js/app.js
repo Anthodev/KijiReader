@@ -8,6 +8,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import VueRouter from 'vue-router'
+import SlideUpDown from 'vue-slide-up-down'
 import App from './App.vue'
 
 import { store } from './store/store.js'
@@ -23,6 +24,7 @@ library.add(faBookmark)
 Vue.use(Vuex)
 Vue.use(VueRouter)
 
+Vue.component('slide-up-down', SlideUpDown)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 // any CSS you import will output into a single css file (app.css in this case)

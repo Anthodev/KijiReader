@@ -1,26 +1,36 @@
 <template>
     <div id="feedList">
-        
+        <app-feed-news v-for="(newsFeed, i) in feedNewsList" :key="i"></app-feed-news>
     </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex';
 
+import FeedNews from './FeedNews'
+
 export default {
     data() {
         return {
-            newsList = this.$store.state.news,
+            feedNewsList: []
         }
     },
 
     methods: {
-        ...mapGetters(news, {
+        ...mapGetters({
 
         }),
-        ...mapActions(news, {
+        ...mapActions({
 
         })
+    },
+
+    components: {
+        appFeedNews: FeedNews
     }
 }
 </script>
+
+<style scoped>
+
+</style>

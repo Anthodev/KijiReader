@@ -37,8 +37,8 @@ export default {
 #sidebar {
     height: 78vh;
     padding: 1rem 2rem 1rem 1rem;
-    box-shadow: 0 0 1em #2f2f2f;
-    border-radius: 1em;
+    background-color: #121212;
+    border-radius: 0.5em;
 }
 
 .menuElement {
