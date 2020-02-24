@@ -30,6 +30,7 @@ class UserController extends AbstractController
         $username = '';
         $email = '';
         $password = '';
+        $roleUser = '';
 
         $data = $request->getContent();
 
@@ -39,13 +40,19 @@ class UserController extends AbstractController
             $username = $decodedData['username'];
             $email = $decodedData['email'];
             $password = $decodedData['password'];
+            $roleUser = $decodedData['roleUser'];
         }
 
-        $user = $userRepository->findOneByEmail($email);
+        $userEmail = $userRepository->findOneByEmail($email);
+        $userUsername = $userRepository->findOneByUsername($username);
 
-        if (!is_null($user)) {
+        if (!is_null($userEmail)) {
             return new JsonResponse([
-                'message' => 'Email already exists'
+                'message' => 'Email already taken.'
+            ], 409);
+        } else if (!is_null($userUsername)) {
+            return new JsonResponse([
+                'message' => 'Username already taken.'
             ], 409);
         }
 
@@ -57,15 +64,7 @@ class UserController extends AbstractController
         $settings = new Settings();
         $user->setSettings($settings);
 
-        $role = $roleRepository->findOneByCode("ROLE_USER");
-        if(is_null($role)) {
-            $role = new Role();
-            $role->setName('User');
-            $role->setCode('ROLE_USER');
-
-            $em->persist($role);
-            $em->flush();
-        }
+        $role = $this->getUserRole($roleUser, $roleRepository, $em);
 
         $user->setRole($role);
 
@@ -77,5 +76,26 @@ class UserController extends AbstractController
         } catch (Exception $e) {
             return new JsonResponse(\json_encode($e), 403);
         }
+    }
+
+    public function getUserRole($roleCode, $roleRepository, $em)
+    {
+        $role = $roleRepository->findOneByCode($roleCode);
+        if (is_null($role)) {
+            $role = new Role();
+
+            if ($roleCode === 'ROLE_USER') {
+                $role->setName('User');
+                $role->setCode('ROLE_USER');
+            } else {
+                $role->setName('Admin');
+                $role->setCode('ROLE_ADMIN');
+            }
+
+            $em->persist($role);
+            $em->flush();
+        }
+
+        return $role;
     }
 }
