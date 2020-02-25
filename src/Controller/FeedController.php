@@ -15,16 +15,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  */
 class FeedController extends AbstractController
 {
-
-    private $fluxRepository;
-    private $em;
-    
-    public function __construct(FluxRepository $fluxRepository, EntityManager $em)
-    {
-        $this->fluxRepository = $fluxRepository;
-        $this->em = $em;
-    }
-
     /**
      * @Route("/feed", name="feed")
      */
@@ -38,7 +28,7 @@ class FeedController extends AbstractController
     /**
      * @Route("/add", methods={"POST"})
      */
-    public function add(Request $request)
+    public function add(Request $request, FluxRepository $fluxRepository, EntityManager $em)
     {
         $feedUrl = '';
         
@@ -50,7 +40,7 @@ class FeedController extends AbstractController
             $feedUrl = $decodedData['feedUrl'];
         }
 
-        $feed = $this->fluxRepository->findOneByRssLink($feedUrl);
+        $feed = $fluxRepository->findOneByRssLink($feedUrl);
 
         if (is_null($feed)) {
             $feedIo = \FeedIo\Factory::create()->getFeedIo();
@@ -62,8 +52,8 @@ class FeedController extends AbstractController
             $feed->setRssLink($feedUrl);
             $feed->setWebsite($result->getFeed()->getUrl());
 
-            $this->em->persist($feed);
-            $this->em->flush();
+            $em->persist($feed);
+            $em->flush();
 
             return new JsonResponse($feed, 200);
         } else {
@@ -76,13 +66,14 @@ class FeedController extends AbstractController
     /**
      * @Route("/get/{id}")
      */
-    public function getFeed($feedUrl)
+    public function getFeed($id, FluxRepository $fluxRepository)
     {
         $newsList = [];
-        
-        $feedIo = \FeedIo\Factory::create()->getFeedIo();
 
-        $result = $feedIo->read($feedUrl);
+        $feedIo = \FeedIo\Factory::create()->getFeedIo();
+        $feed = $fluxRepository->find($id);
+
+        $result = $feedIo->read($feed->getRssLink());
 
         foreach ($result->getFeed() as $news) {
             // TODO
