@@ -53,10 +53,10 @@ class Story
     private $seen;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Flux", inversedBy="stories")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Feed", inversedBy="stories")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $flux;
+    private $feed;
 
     public function getId(): ?int
     {
@@ -135,14 +135,14 @@ class Story
         return $this;
     }
 
-    public function getFlux(): ?Flux
+    public function getFeed(): ?Feed
     {
-        return $this->flux;
+        return $this->feed;
     }
 
-    public function setFlux(?Flux $flux): self
+    public function setFeed(?Feed $feed): self
     {
-        $this->flux = $flux;
+        $this->feed = $feed;
 
         return $this;
     }

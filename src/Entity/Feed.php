@@ -7,9 +7,9 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\FluxRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\FeedRepository")
  */
-class Flux
+class Feed
 {
     /**
      * @ORM\Id()
@@ -34,12 +34,12 @@ class Flux
     private $rssLink;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\User", inversedBy="fluxes")
+     * @ORM\ManyToMany(targetEntity="App\Entity\User", inversedBy="feeds")
      */
     private $users;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Story", mappedBy="flux", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\Story", mappedBy="feed", orphanRemoval=true)
      */
     private $stories;
 
@@ -128,7 +128,7 @@ class Flux
     {
         if (!$this->stories->contains($story)) {
             $this->stories[] = $story;
-            $story->setFlux($this);
+            $story->setFeed($this);
         }
 
         return $this;
@@ -139,8 +139,8 @@ class Flux
         if ($this->stories->contains($story)) {
             $this->stories->removeElement($story);
             // set the owning side to null (unless already changed)
-            if ($story->getFlux() === $this) {
-                $story->setFlux(null);
+            if ($story->getFeed() === $this) {
+                $story->setFeed(null);
             }
         }
 

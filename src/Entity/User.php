@@ -64,9 +64,9 @@ class User implements UserInterface, \Serializable
     private $settings;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Flux", mappedBy="users")
+     * @ORM\ManyToMany(targetEntity="App\Entity\Feed", mappedBy="users")
      */
-    private $fluxes;
+    private $feeds;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Folder", mappedBy="user", orphanRemoval=true)
@@ -75,7 +75,7 @@ class User implements UserInterface, \Serializable
 
     public function __construct()
     {
-        $this->fluxes = new ArrayCollection();
+        $this->feeds = new ArrayCollection();
         $this->folders = new ArrayCollection();
     }
 
@@ -193,28 +193,28 @@ class User implements UserInterface, \Serializable
     }
 
     /**
-     * @return Collection|Flux[]
+     * @return Collection|Feed[]
      */
-    public function getFluxes(): Collection
+    public function getFeeds(): Collection
     {
-        return $this->fluxes;
+        return $this->feeds;
     }
 
-    public function addFlux(Flux $flux): self
+    public function addFeed(Feed $feed): self
     {
-        if (!$this->fluxes->contains($flux)) {
-            $this->fluxes[] = $flux;
-            $flux->addUser($this);
+        if (!$this->feeds->contains($feed)) {
+            $this->feeds[] = $feed;
+            $feed->addUser($this);
         }
 
         return $this;
     }
 
-    public function removeFlux(Flux $flux): self
+    public function removeFeed(Feed $feed): self
     {
-        if ($this->fluxes->contains($flux)) {
-            $this->fluxes->removeElement($flux);
-            $flux->removeUser($this);
+        if ($this->feeds->contains($feed)) {
+            $this->feeds->removeElement($feed);
+            $feed->removeUser($this);
         }
 
         return $this;

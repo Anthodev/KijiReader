@@ -11,7 +11,7 @@ class Settings
 {
     public function __construct()
     {
-        $this->viewFlux = 1;
+        $this->viewFeed = 1;
         $this->viewArticle = 0;
         $this->orderArticle = 0;
         $this->displayUnread = true;
@@ -27,7 +27,7 @@ class Settings
     /**
      * @ORM\Column(type="integer")
      */
-    private $viewFlux;
+    private $viewFeed;
 
     /**
      * @ORM\Column(type="integer")
@@ -65,14 +65,14 @@ class Settings
         return $this->id;
     }
 
-    public function getViewFlux(): ?int
+    public function getViewFeed(): ?int
     {
-        return $this->viewFlux;
+        return $this->viewFeed;
     }
 
-    public function setViewFlux(int $viewFlux): self
+    public function setViewFeed(int $viewFeed): self
     {
-        $this->viewFlux = $viewFlux;
+        $this->viewFeed = $viewFeed;
 
         return $this;
     }
