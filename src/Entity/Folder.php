@@ -24,9 +24,9 @@ class Folder
     private $name;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Flux")
+     * @ORM\ManyToMany(targetEntity="App\Entity\Feed")
      */
-    private $fluxes;
+    private $feeds;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="folders")
@@ -36,7 +36,7 @@ class Folder
 
     public function __construct()
     {
-        $this->fluxes = new ArrayCollection();
+        $this->feeds = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -57,26 +57,26 @@ class Folder
     }
 
     /**
-     * @return Collection|Flux[]
+     * @return Collection|Feed[]
      */
-    public function getFluxes(): Collection
+    public function getFeeds(): Collection
     {
-        return $this->fluxes;
+        return $this->feeds;
     }
 
-    public function addFlux(Flux $flux): self
+    public function addFeed(Feed $feed): self
     {
-        if (!$this->fluxes->contains($flux)) {
-            $this->fluxes[] = $flux;
+        if (!$this->feeds->contains($feed)) {
+            $this->feeds[] = $feed;
         }
 
         return $this;
     }
 
-    public function removeFlux(Flux $flux): self
+    public function removeFeed(Feed $feed): self
     {
-        if ($this->fluxes->contains($flux)) {
-            $this->fluxes->removeElement($flux);
+        if ($this->feeds->contains($feed)) {
+            $this->feeds->removeElement($feed);
         }
 
         return $this;

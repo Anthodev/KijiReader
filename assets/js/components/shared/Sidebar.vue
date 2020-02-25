@@ -1,6 +1,6 @@
 <template>
     <div id="sidebar">
-        <div id="addFlux" class="form-row">
+        <div id="addFeed" class="form-row">
             <div class="col">
                 <input type="text" name="inputAddFeed" id="inputAddFeed" class="form-control" placeholder="Add a feed" v-model="inputFeed">
             </div>
