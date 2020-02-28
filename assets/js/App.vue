@@ -40,3 +40,13 @@
     }
   }
 </script>
+
+<style lang="scss">
+  $font-color: #f5e2c8;
+  $bg-color: #2f2f2f;
+
+  body {
+    background-color: $bg-color;
+    color: $font-color;
+  }
+</style>
