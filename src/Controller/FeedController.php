@@ -2,36 +2,40 @@
 
 namespace App\Controller;
 
+use Exception;
 use App\Entity\Feed;
 use App\Entity\Story;
+use App\Utils\FeedFetcher;
 use App\Repository\FeedRepository;
 use App\Repository\StoryRepository;
-use Doctrine\ORM\EntityManager;
-use Exception;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
  * @Route("/feed")
  */
 class FeedController extends AbstractController
 {
-    /**
-     * @Route("/feed", name="feed")
-     */
-    public function index()
+    private $feedFetcher;
+    private $feedRepository;
+    private $storyRepository;
+    private $em;
+
+    public function __construct(FeedFetcher $feedFetcher, FeedRepository $feedRepository, StoryRepository $storyRepository, EntityManagerInterface $em)
     {
-        return $this->render('feed/index.html.twig', [
-            'controller_name' => 'FeedController',
-        ]);
+        $this->feedFetcher = $feedFetcher;
+        $this->feedRepository = $feedRepository;
+        $this->storyRepository = $storyRepository;
+        $this->em = $em;
     }
 
     /**
      * @Route("/add", methods={"POST"})
      */
-    public function add(Request $request, FeedRepository $feedRepository, EntityManager $em)
+    public function addFeed(Request $request)
     {
         $feedUrl = '';
         
@@ -43,7 +47,7 @@ class FeedController extends AbstractController
             $feedUrl = $decodedData['feedUrl'];
         }
 
-        $feed = $feedRepository->findOneByRssLink($feedUrl);
+        $feed = $this->feedRepository->findOneByRssLink($feedUrl);
 
         if (is_null($feed)) {
             $feedIo = \FeedIo\Factory::create()->getFeedIo();
@@ -55,16 +59,19 @@ class FeedController extends AbstractController
             $feed->setRssLink($feedUrl);
             $feed->setWebsite($result->getFeed()->getUrl());
 
-            $em->persist($feed);
+            $this->em->persist($feed);
 
-            foreach ($result->getFeed() as $news) {
+            foreach ($result->getFeed() as $item) {
                 $story = new Story();
-                $story = $this->addNews($news, $story);
+                $story->setTitle($item->getTitle());
+                $story->setContent($item->getDescription());
+                $story->setUrl($item->getUrl());
+                $story->setDate($item->getLastModified());
                 $story->setFeed($feed);
-                $em->persist($story);
+                $this->em->persist($story);
             }
 
-            $em->flush();
+            $this->em->flush();
 
             return new JsonResponse($feed, 200);
         } else {
@@ -77,41 +84,12 @@ class FeedController extends AbstractController
     /**
      * @Route("/get")
      */
-    public function getFeeds(FeedRepository $feedRepository, StoryRepository $storyRepository, EntityManager $em)
+    public function getFeeds()
     {
-        $newsList = [];
-        
-        $feedIo = \FeedIo\Factory::create()->getFeedIo();
-        $feeds = $feedRepository->findAll();
-
-        foreach ($feeds as $feed) {
-            $stories = $storyRepository->findBy(['feed' => $feed], ['date' => 'DESC']);
-            $newsList[] = $stories;
-            $lastStory = $stories->first();
-            $result = $feedIo->readSince($feed->getRssLink(), new \DateTime($lastStory->getDate()));
-
-            foreach ($result->getFeed() as $news) {
-                $story = new Story();
-                $story = $this->addNews($news, $story);
-                $story->setFeed($feed);
-                $em->persist($story);
-
-                $newsList[] = $story;
-            }
-
-            $em->flush();
-        }
-
-        $iterator = $newsList->getIterator();
-
-        $iterator->uasort(function ($a, $b) {
-            return ($a->getDate() > $b->getDate()) ? -1 : 1;
-        });
-
         try {
-            $em->flush();
+            $newsList = $this->feedFetcher->getFeeds();
 
-            return new JsonResponse($iterator, 200);
+            return new JsonResponse($newsList, 200);
         } catch (Exception $e) {
             return new JsonResponse(\json_encode($e), 403);
         }
@@ -120,48 +98,14 @@ class FeedController extends AbstractController
     /**
      * @Route("/get/{id}")
      */
-    public function getFeed($id, FeedRepository $feedRepository, StoryRepository $storyRepository, EntityManager $em)
+    public function getFeed($id)
     {
-        $feedIo = \FeedIo\Factory::create()->getFeedIo();
-        $feed = $feedRepository->find($id);
-        $stories = $storyRepository->findBy(['feed' => $feed], ['date' => 'DESC']);
-        $lastStory = $stories->first();
-
-        $newsList = $stories;
-
-        $result = $feedIo->readSince($feed->getRssLink(), new \DateTime($lastStory->getDate()));
-
-        foreach ($result->getFeed() as $news) {
-            $story = new Story();
-            $story = $this->addNews($news, $story);
-            $story->setFeed($feed);
-            $em->persist($story);
-
-            $newsList[] = $story;
-        }
-
-        $em->flush();
-
-        $iterator = $newsList->getIterator();
-
-        $iterator->uasort(function ($a, $b) {
-            return ($a->getDate() > $b->getDate()) ? -1 : 1;
-        });
-
         try {
-            $em->flush();
+            $newsList = $this->feedFetcher->getFeed($id);
 
-            return new JsonResponse($iterator, 200);
+            return new JsonResponse($newsList, 200);
         } catch (Exception $e) {
             return new JsonResponse(\json_encode($e), 403);
         }
-    }
-
-    public function addNews($news, $story)
-    {
-        $story->setTitle($news->getTitle());
-        $story->setContent($news->getDescription());
-        $story->setUrl($news->getUrl());
-        $story->setDate($news->getLastModified());
     }
 }
