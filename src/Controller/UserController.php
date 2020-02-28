@@ -2,17 +2,17 @@
 
 namespace App\Controller;
 
+use Exception;
 use App\Entity\Role;
-use App\Entity\Settings;
 use App\Entity\User;
+use App\Entity\Settings;
 use App\Repository\RoleRepository;
 use App\Repository\UserRepository;
-use Doctrine\ORM\EntityManager;
-use Exception;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
  * @Route("/user")
@@ -20,12 +20,24 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class UserController extends AbstractController
 {
+
+    private $userRepository;
+    private $roleRepository;
+    private $em;
+    
+    public function __construct(UserRepository $userRepository, RoleRepository $roleRepository, EntityManagerInterface $em)
+    {
+        $this->userRepository = $userRepository;
+        $this->roleRepository = $roleRepository;
+        $this->em = $em;
+    }
+
     /**
      * @Route("/new", methods={"POST"})
      * @param Request $request 
      * @return JsonResponse|void 
      */
-    public function new(Request $request, UserRepository $userRepository, RoleRepository $roleRepository, EntityManager $em)
+    public function new(Request $request)
     {
         $username = '';
         $email = '';
@@ -43,8 +55,8 @@ class UserController extends AbstractController
             $roleUser = $decodedData['roleUser'];
         }
 
-        $userEmail = $userRepository->findOneByEmail($email);
-        $userUsername = $userRepository->findOneByUsername($username);
+        $userEmail = $this->userRepository->findOneByEmail($email);
+        $userUsername = $this->userRepository->findOneByUsername($username);
 
         if (!is_null($userEmail)) {
             return new JsonResponse([
@@ -63,17 +75,17 @@ class UserController extends AbstractController
 
         $settings = new Settings();
         $settings->setUser($user);
-        $em->persist($settings);
+        $this->em->persist($settings);
 
         $user->setSettings($settings);
 
-        $role = $this->getUserRole($roleUser, $roleRepository, $em);
+        $role = $this->getUserRole($roleUser);
 
         $user->setRole($role);
 
         try {
-            $em->persist($user);
-            $em->flush();
+            $this->em->persist($user);
+            $this->em->flush();
 
             return new JsonResponse($user, 200);
         } catch (Exception $e) {
@@ -81,9 +93,9 @@ class UserController extends AbstractController
         }
     }
 
-    public function getUserRole($roleCode, $roleRepository, $em)
+    public function getUserRole($roleCode)
     {
-        $role = $roleRepository->findOneByName($roleCode);
+        $role = $this->roleRepository->findOneByName($roleCode);
         if (is_null($role)) {
             $role = new Role();
 
@@ -95,8 +107,8 @@ class UserController extends AbstractController
                 $role->setCode('ROLE_ADMIN');
             }
 
-            $em->persist($role);
-            $em->flush();
+            $this->em->persist($role);
+            $this->em->flush();
         }
 
         return $role;
