@@ -1,15 +1,22 @@
 <template>
   <div class="container-fluid">
-    <app-header></app-header>
-    <app-main></app-main>
-    <app-footer></app-footer>
+    <div v-if="auth">
+      <app-header></app-header>
+      <app-main></app-main>
+      <app-footer></app-footer>
+    </div>
+    <div v-else>
+
+    </div>
   </div>
 </template>
 
 <script>
-  import Header from './components/shared/Header.vue';
-  import Footer from './components/shared/Footer.vue';
-  import Main from './components/Main.vue';
+  import Header from './components/shared/Header.vue'
+  import Footer from './components/shared/Footer.vue'
+  import Main from './components/Main.vue'
+
+  import Authentication from './components/shared/authentication/Authentication'
 
   export default {
     name: 'App',
@@ -17,6 +24,12 @@
     data() {
       return {
         
+      }
+    },
+
+    computed: {
+      auth () {
+        return this.$store.getters.isAuthenticated
       }
     },
 

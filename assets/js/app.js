@@ -11,8 +11,13 @@ import VueRouter from 'vue-router'
 import SlideUpDown from 'vue-slide-up-down'
 import App from './App.vue'
 
-import { store } from './store/store.js'
-import { routes } from './routes.js'
+import axios from 'axios'
+axios.defaults.baseURL = window.location.origin
+axios.defaults.headers.get['Accepts'] = 'application/json'
+
+import store from './store/store'
+
+import { routes } from './routes'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faHome, faStar, faBookmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
