@@ -26,10 +26,19 @@
 
 <script>
 export default {
-    
+    data() {
+        return {
+            username: '',
+            password: '',
+            passwordConfirm: '',
+            email: ''
+        }
+    }
 }
 </script>
 
-<style lang="less" scoped>
-
+<style lang="scss" scoped>
+#signup {
+    width: 100%;
+}
 </style>

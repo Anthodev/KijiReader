@@ -2,6 +2,8 @@ import store from './store/store'
 
 import Feed from './components/feedPage/FeedPane.vue'
 import Authentication from './components/shared/authentication/Authentication.vue'
+import Signin from './components/shared/authentication/Signin.vue'
+import Signup from './components/shared/authentication/Signup.vue'
 
 export const routes = [
     {
@@ -10,11 +12,22 @@ export const routes = [
         components: {
             default: Feed
         },
+        
         beforeEnter: (to, from, next) => {
+            store.dispatch('getUsersCount')
+
             if (store.state.userToken) next()
-            else next('/signin')
+            else if(store.state.usersCount > 0) next('/signin')
+            else next('/signup')
         }
     },
-    { path: '/signin', name: 'authentication', component: Authentication },
+    { path: '/signin', name: 'signin', components: {
+        default: Authentication,
+        'signinComponent': Signin
+    }},
+    { path: '/signup', name: 'signup', components: {
+        default: Authentication,
+        'signupComponent': Signup
+    }},
     { path: '*', redirect: '/' },
 ]

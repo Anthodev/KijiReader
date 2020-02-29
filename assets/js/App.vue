@@ -6,7 +6,7 @@
       <app-footer></app-footer>
     </div>
     <div v-else>
-
+      <app-authentication></app-authentication>
     </div>
   </div>
 </template>
@@ -37,6 +37,7 @@
       appHeader: Header,
       appFooter: Footer,
       appMain: Main,
+      appAuthentication: Authentication
     }
   }
 </script>

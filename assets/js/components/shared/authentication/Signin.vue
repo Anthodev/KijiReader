@@ -17,10 +17,17 @@
 
 <script>
 export default {
-    
+    data() {
+        return {
+            username: '',
+            password: ''
+        }
+    }
 }
 </script>
 
 <style lang="scss" scoped>
-
+#signin {
+    width: 100%;
+}
 </style>
