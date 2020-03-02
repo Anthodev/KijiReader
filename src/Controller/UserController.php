@@ -144,7 +144,7 @@ class UserController extends AbstractController
             'id' => $user->getId(),
             'username' => $user->getUsername(),
             'email' => $user->getEmail(),
-            'role' => $user->getRole()
+            'role' => $user->getRole()->getName()
         ], 200);
     }
 
@@ -162,7 +162,7 @@ class UserController extends AbstractController
             'id' => $user->getId(),
             'username' => $user->getUsername(),
             'email' => $user->getEmail(),
-            'role' => $user->getRole()
+            'role' => $user->getRole()->getName()
         ], 200);
     }
 }

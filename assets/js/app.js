@@ -13,7 +13,7 @@ import App from './App.vue'
 
 import axios from 'axios'
 axios.defaults.baseURL = window.location.origin
-axios.defaults.headers.get['Accepts'] = 'application/json'
+axios.defaults.headers.common['Content-Type'] = 'application/json'
 
 import store from './store/store'
 import router from './router'
@@ -32,7 +32,7 @@ Vue.use(Vuelidate)
 Vue.component('slide-up-down', SlideUpDown)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
-if (localStorage.getItem('userToken') != null || localStorage.getItem('userToken') != '') axios.defaults.headers.common["Authorization"] = `Bearer ${localStorage.getItem("userToken")}`
+if (localStorage.getItem('userToken')) axios.defaults.headers.common["Authorization"] = `Bearer ${localStorage.getItem('userToken')}`
 else delete axios.defaults.headers.common["Authorization"]
 
 // any CSS you import will output into a single css file (app.css in this case)

@@ -10,12 +10,7 @@ export default new Vuex.Store({
     state: {
         usersCount: 0,
         userToken: null,
-        user: {
-            id: '',
-            username: '',
-            email: '',
-            role: ''
-        }
+        user: null
     },
 
     modules: {
@@ -37,12 +32,7 @@ export default new Vuex.Store({
 
         clearAuthData (state) {
             state.userToken = null
-            state.user = {
-                id: '',
-                username: '',
-                email: '',
-                role: ''
-            }
+            state.user = null
         }
     },
 
@@ -103,9 +93,10 @@ export default new Vuex.Store({
         },
 
         fetchUser ({ commit, getters }) {
+            console.log('fetchUser')
             if (!getters.userToken) return
 
-            return axios.get('/user/profile', {})
+            return axios.get('/user/profile')
             .then(res => {
                 console.log(res)
                 commit("storeUser", {
@@ -122,12 +113,16 @@ export default new Vuex.Store({
     },
 
     getters: {
-        isAuthenticated (state) {
+        isAuthenticated () {
             return localStorage.getItem('userToken') !== null
         },
 
         usersCount (state) {
             return state.usersCount
+        },
+
+        user (state) {
+            return state.user
         },
 
         userToken () {

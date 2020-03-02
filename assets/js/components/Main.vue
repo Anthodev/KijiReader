@@ -32,7 +32,7 @@
         },
 
         mounted() {
-            if (this.$store.user === null) this.fetchUser()
+            if (this.$store.getters.user == null) this.fetchUser()
         }
     }
 </script>
