@@ -8,6 +8,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import VueRouter from 'vue-router'
+import Vuelidate from "vuelidate";
 import SlideUpDown from 'vue-slide-up-down'
 import App from './App.vue'
 
@@ -28,9 +29,13 @@ library.add(faBookmark)
 
 Vue.use(Vuex)
 Vue.use(VueRouter)
+Vue.use(Vuelidate)
 
 Vue.component('slide-up-down', SlideUpDown)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
+
+if (localStorage.getItem('userToken') != null || localStorage.getItem('userToken') != '') axios.defaults.headers.common["Authorization"] = `Bearer ${localStorage.getItem("userToken")}`
+else delete axios.defaults.headers.common["Authorization"]
 
 // any CSS you import will output into a single css file (app.css in this case)
 // import '../css/app.css'

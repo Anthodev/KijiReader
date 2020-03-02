@@ -1,4 +1,5 @@
 import store from './store/store'
+import router from 'vue-router'
 
 import Feed from './components/feedPage/FeedPane.vue'
 import Authentication from './components/shared/authentication/Authentication.vue'
@@ -14,20 +15,42 @@ export const routes = [
         },
         
         beforeEnter: (to, from, next) => {
-            store.dispatch('getUsersCount')
+            store.dispatch('getUsersCount').then(() => {
+                if (store.getters.isAuthenticated) next()
+                else if (store.state.usersCount > 0) next('signin')
+                else next('signup')
+            })
+        },
 
-            if (store.state.userToken) next()
-            else if(store.state.usersCount > 0) next('/signin')
-            else next('/signup')
-        }
+        created() {
+            store.dispatch('fetchUser')
+        },
     },
+
     { path: '/signin', name: 'signin', components: {
         default: Authentication,
         'signinComponent': Signin
-    }},
+        },
+    
+        beforeEnter: (to, from, next) => {
+            store.dispatch('getUsersCount').then(() => {
+                if (store.getters.isAuthenticated) next('home')
+                else if (store.state.usersCount > 0) next()
+                else next('signup')
+            })
+        }
+
+    },
+
     { path: '/signup', name: 'signup', components: {
         default: Authentication,
         'signupComponent': Signup
-    }},
+        },
+
+        beforeEnter: (to, from, next) => {
+            if (store.getters.isAuthenticated) next('home')
+            else next()
+        }
+    },
     { path: '*', redirect: '/' },
 ]

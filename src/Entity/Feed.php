@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\FeedRepository")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Feed
 {
