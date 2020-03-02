@@ -17,6 +17,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
  * @Route("/user")
+ * @IsGranted("IS_AUTHENTICATED_ANONYMOUSLY")
  * @package App\Controller
  */
 class UserController extends AbstractController
@@ -35,6 +36,7 @@ class UserController extends AbstractController
 
     /**
      * @Route("/new", methods={"POST"})
+     * @IsGranted("IS_AUTHENTICATED_ANONYMOUSLY")
      * @param Request $request 
      * @return JsonResponse|void 
      */
@@ -56,18 +58,20 @@ class UserController extends AbstractController
             $roleUser = $decodedData['roleUser'];
         }
 
-        $userEmail = $this->userRepository->findOneByEmail($email);
-        $userUsername = $this->userRepository->findOneByUsername($username);
+        $checkUserEmail = $this->userRepository->findOneByEmail($email);
+        $checkUserUsername = $this->userRepository->findOneByUsername($username);
 
-        if (!is_null($userEmail)) {
+        if (!is_null($checkUserEmail)) {
             return new JsonResponse([
                 'message' => 'Email already taken.'
             ], 409);
-        } else if (!is_null($userUsername)) {
+        } else if (!is_null($checkUserUsername)) {
             return new JsonResponse([
                 'message' => 'Username already taken.'
             ], 409);
         }
+
+        $role = $this->getUserRole($roleUser);
 
         $user = new User();
         $user->setUsername($username);
@@ -80,9 +84,8 @@ class UserController extends AbstractController
 
         $user->setSettings($settings);
 
-        $role = $this->getUserRole($roleUser);
-
         $user->setRole($role);
+        $role->addUser($user);
 
         try {
             $this->em->persist($user);
@@ -94,9 +97,21 @@ class UserController extends AbstractController
         }
     }
 
+    /**
+     * @Route("/countUsers", methods={"GET"})
+     * @IsGranted("IS_AUTHENTICATED_ANONYMOUSLY")
+     * @param mixed $roleCode 
+     * @return mixed|Role 
+     */
+    public function getUsersCount()
+    {
+        return new JsonResponse(count($this->userRepository->findAll()), 200);
+    }
+
     public function getUserRole($roleCode)
     {
         $role = $this->roleRepository->findOneByName($roleCode);
+        
         if (is_null($role)) {
             $role = new Role();
 
@@ -129,6 +144,25 @@ class UserController extends AbstractController
             'id' => $user->getId(),
             'username' => $user->getUsername(),
             'email' => $user->getEmail(),
+            'role' => $user->getRole()->getName()
+        ], 200);
+    }
+
+    /**
+     * Return user info
+     * 
+     * @Route("/profile", methods={"GET"})
+     * @IsGranted("IS_AUTHENTICATED_FULLY")
+     */
+    public function getUserInfo()
+    {
+        $user = $this->getUser();
+
+        return new JsonResponse([
+            'id' => $user->getId(),
+            'username' => $user->getUsername(),
+            'email' => $user->getEmail(),
+            'role' => $user->getRole()->getName()
         ], 200);
     }
 }

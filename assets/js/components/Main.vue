@@ -26,7 +26,13 @@
         },
 
         methods: {
-            
+            fetchUser() {
+                this.$store.dispatch('fetchUser')
+            }
+        },
+
+        mounted() {
+            if (this.$store.getters.user == null) this.fetchUser()
         }
     }
 </script>
