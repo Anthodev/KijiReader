@@ -12,6 +12,7 @@
                     <li class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Account</a>
                         <div class="dropdown-menu dropdown-menu-right text-right">
+                            <a href="" class="dropdown-item">Signed as: <strong>{{ user }}</strong></a>
                             <router-link to="/feed" class="dropdown-item">Profile</router-link>
                             <router-link to="/feed" class="dropdown-item">Settings</router-link>
                             <router-link to="/feed" class="dropdown-item">Manage subscriptions</router-link>
@@ -30,6 +31,10 @@
             checkAuth() {
                 return this.$store.getters.isAuthenticated
             },
+
+            user () {
+                return !this.$store.getters.user ? false : this.$store.getters.user.username
+            }
         },
 
         methods: {

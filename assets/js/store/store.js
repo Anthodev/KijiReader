@@ -93,19 +93,13 @@ export default new Vuex.Store({
         },
 
         fetchUser ({ commit, getters }) {
-            console.log('fetchUser')
             if (!getters.userToken) return
 
             return axios.get('/user/profile')
             .then(res => {
                 console.log(res)
                 commit("storeUser", {
-                    user: {
-                        id: res.data.id,
-                        username: res.data.username,
-                        email: res.data.email,
-                        role: res.data.role
-                    }
+                    user: res.data
                 });
             })
             .catch(error => console.log(error))
