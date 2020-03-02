@@ -7,7 +7,6 @@
 
 import Vue from 'vue'
 import Vuex from 'vuex'
-import VueRouter from 'vue-router'
 import Vuelidate from "vuelidate";
 import SlideUpDown from 'vue-slide-up-down'
 import App from './App.vue'
@@ -17,8 +16,8 @@ axios.defaults.baseURL = window.location.origin
 axios.defaults.headers.get['Accepts'] = 'application/json'
 
 import store from './store/store'
+import router from './router'
 
-import { routes } from './routes'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faHome, faStar, faBookmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -28,7 +27,6 @@ library.add(faStar)
 library.add(faBookmark)
 
 Vue.use(Vuex)
-Vue.use(VueRouter)
 Vue.use(Vuelidate)
 
 Vue.component('slide-up-down', SlideUpDown)
@@ -42,16 +40,6 @@ else delete axios.defaults.headers.common["Authorization"]
 
 // Need jQuery? Install it with "yarn add jquery", then uncomment to import it.
 // import $ from 'jquery';
-
-const router = new VueRouter({
-    routes,
-    mode: 'history',
-    scrollBehavior(to, from, savedPosition) {
-        if (savedPosition) return savedPosition;
-        if (to.hash) return { selector: to.hash };
-        return { x: 0, y: 0 };
-    }
-})
 
 new Vue({
     el: '#app',

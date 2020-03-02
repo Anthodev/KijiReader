@@ -15,6 +15,7 @@
                             <router-link to="/feed" class="dropdown-item">Profile</router-link>
                             <router-link to="/feed" class="dropdown-item">Settings</router-link>
                             <router-link to="/feed" class="dropdown-item">Manage subscriptions</router-link>
+                            <router-link to="/logout" class="dropdown-item" v-if="checkAuth" @click.native="onLogout">Logout</router-link>
                         </div>
                     </li>
                 </ul>
@@ -25,7 +26,17 @@
 
 <script>
     export default {
-        
+        computed: {
+            checkAuth() {
+                return this.$store.getters.isAuthenticated
+            },
+        },
+
+        methods: {
+            onLogout() {
+                this.$store.dispatch('logout')
+            }
+        }
     }
 </script>
 

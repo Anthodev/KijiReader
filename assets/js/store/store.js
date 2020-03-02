@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
-import router from 'vue-router'
+import router from '../router'
 import { news } from './modules/news'
 
 Vue.use(Vuex)
@@ -27,17 +27,27 @@ export default new Vuex.Store({
             state.usersCount = payload.usersCount
         },
 
-        storeToken(state, payload) {
+        storeToken (state, payload) {
             state.userToken = payload.userToken
         },
         
-        storeUser(state, payload) {
+        storeUser (state, payload) {
             state.user = payload.user
+        },
+
+        clearAuthData (state) {
+            state.userToken = null
+            state.user = {
+                id: '',
+                username: '',
+                email: '',
+                role: ''
+            }
         }
     },
 
     actions: {
-        getUsersCount ({ commit, state }) {
+        getUsersCount ({ commit }) {
             return axios.get('/user/countUsers', {})
                 .then(res => {
                     console.log(res)
@@ -78,13 +88,22 @@ export default new Vuex.Store({
                 localStorage.setItem('userToken', res.data.token)
                 axios.defaults.headers.common['Authorization'] = `Bearer ${getters.userToken}`
                 
-                router.push({ name: 'home' })
+                router.go({ name: 'home' })
             })
             .catch(error => console.log(error))
         },
 
-        fetchUser ({ commit, state }) {
-            if (!state.userToken) return
+        logout ({ commit }) {
+            localStorage.removeItem('userToken')
+            delete axios.defaults.headers.common['Authorization']
+
+            commit('clearAuthData')
+            
+            router.go({ name: 'signin' })
+        },
+
+        fetchUser ({ commit, getters }) {
+            if (!getters.userToken) return
 
             return axios.get('/user/profile', {})
             .then(res => {
