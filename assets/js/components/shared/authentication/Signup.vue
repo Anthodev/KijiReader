@@ -88,7 +88,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#signup {
-    width: 100%;
-}
+// #signup {
+//     width: 100%;
+// }
 </style>

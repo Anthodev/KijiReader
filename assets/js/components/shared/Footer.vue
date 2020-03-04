@@ -1,20 +1,7 @@
 <template>
-  <div id="footer" class="fixed-bottom">
-    <div class="container">
-      <div class="footer-block">
-        <ul class="list-group">
-          <li class="list-group-item">Contact us</li>
-          <li class="list-group-item">Privacy Policy</li>
-        </ul>
-      </div>
-      <div class="footer-block">
-        <ul class="list-group">
-          <li class="list-group-item">KijiReader on Github</li>
-          <li class="list-group-item">Twitter</li>
-        </ul>
-      </div>
-    </div>
-  </div>
+  <v-footer app>
+      <span>&copy; 2019</span>
+  </v-footer>
 </template>
 
 <script>

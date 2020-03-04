@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
@@ -21,7 +22,6 @@ class FeedController extends AbstractController
 {
     private $feedFetcher;
     private $feedRepository;
-    private $storyRepository;
     private $em;
 
     public function __construct(FeedFetcher $feedFetcher, FeedRepository $feedRepository, StoryRepository $storyRepository, EntityManagerInterface $em)
@@ -34,9 +34,11 @@ class FeedController extends AbstractController
 
     /**
      * @Route("/add", methods={"POST"})
+     * @IsGranted("IS_AUTHENTICATED_FULLY")
      */
     public function addFeed(Request $request)
     {
+        $user = $this->getUser();
         $feedUrl = '';
         
         $data = $request->getContent();
@@ -57,17 +59,20 @@ class FeedController extends AbstractController
 
             $feed->setName($result->getFeed()->getTitle());
             $feed->setRssLink($feedUrl);
-            $feed->setWebsite($result->getFeed()->getUrl());
+            $feed->setWebsite($result->getFeed()->getLink());
+            $feed->addUser($user);
 
             $this->em->persist($feed);
+            $user->addFeed($feed);
 
             foreach ($result->getFeed() as $item) {
                 $story = new Story();
                 $story->setTitle($item->getTitle());
                 $story->setContent($item->getDescription());
-                $story->setUrl($item->getUrl());
+                $story->setUrl($item->getLink());
                 $story->setDate($item->getLastModified());
                 $story->setFeed($feed);
+                $feed->addStory($story);
                 $this->em->persist($story);
             }
 
@@ -87,7 +92,7 @@ class FeedController extends AbstractController
     public function getFeeds()
     {
         try {
-            $newsList = $this->feedFetcher->getFeeds();
+            $newsList = $this->feedFetcher->getFeeds($this->getUser());
 
             return new JsonResponse($newsList, 200);
         } catch (Exception $e) {

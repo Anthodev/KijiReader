@@ -59,7 +59,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#signin {
-    width: 100%;
-}
+// #signin {
+//     width: 100%;
+// }
 </style>

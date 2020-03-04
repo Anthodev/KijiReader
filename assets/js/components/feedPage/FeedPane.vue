@@ -1,8 +1,8 @@
 <template>
-    <div id="feedPane">
+    <v-container fluid>
         <app-feed-bar></app-feed-bar>
         <app-feed-list></app-feed-list>
-    </div>
+    </v-container>
 </template>
 
 <script>

@@ -1,48 +1,54 @@
 <template>
-    <div id="header" class="fixed-top">
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark" role="navigation">
-            <router-link to="/" class="navbar-brand">KijiReader</router-link>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarHeader">
-                <ul class="navbar-nav mr-auto"></ul>
-                <ul class="navbar-nav my-2 my-lg-0">
-                    <li class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Account</a>
-                        <div class="dropdown-menu dropdown-menu-right text-right">
-                            <a href="" class="dropdown-item">Signed as: <strong>{{ user }}</strong></a>
-                            <router-link to="/feed" class="dropdown-item">Profile</router-link>
-                            <router-link to="/feed" class="dropdown-item">Settings</router-link>
-                            <router-link to="/feed" class="dropdown-item">Manage subscriptions</router-link>
-                            <router-link to="/logout" class="dropdown-item" v-if="checkAuth" @click.native="onLogout">Logout</router-link>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-    </div>
+    <v-app-bar app clipped-left>
+        <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
+        <v-toolbar-title>KijiReader</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <app-feed-add></app-feed-add>
+    </v-app-bar>
 </template>
 
 <script>
-    export default {
-        computed: {
-            checkAuth() {
-                return this.$store.getters.isAuthenticated
-            },
+import FeedAdd from './FeedAdd'
 
-            user () {
-                return !this.$store.getters.user ? false : this.$store.getters.user.username
-            }
+export default {
+    computed: {
+        checkAuth() {
+            return this.$store.getters.isAuthenticated
         },
 
-        methods: {
-            onLogout() {
-                this.$store.dispatch('logout')
+        user () {
+            return !this.$store.getters.user ? false : this.$store.getters.user.username
+        },
+
+        drawer: {
+            get () {
+                return this.$store.getters.drawer
+            },
+
+            set () {
+                this.$store.dispatch('setDrawerStatus')
             }
         }
-    }
+    },
+
+    methods: {
+        setDrawerStatus () {
+            this.$store.dispatch('setDrawerStatus')
+        },
+
+        onLogout() {
+            this.$store.dispatch('logout')
+        }
+    },
+
+    components: {
+        appFeedAdd: FeedAdd
+    },
+
+    created () {
+        this.$vuetify.theme.dark = true
+    },
+}
 </script>
 
 <style scoped>

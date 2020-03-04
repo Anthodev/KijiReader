@@ -23,13 +23,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.divAuth {
-    margin-top: 50vh;
-    display: flex;
-    transform: translateY(-50%);
-}
+// .divAuth {
+//     margin-top: 50vh;
+//     display: flex;
+//     transform: translateY(-50%);
+// }
 
-#componentSignup {
-    margin: 0 auto;
-}
+// #componentSignup {
+//     margin: 0 auto;
+// }
 </style>

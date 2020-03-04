@@ -1,40 +1,70 @@
 <template>
     <div id="sidebar">
-        <div id="addFeed" class="form-row">
-            <div class="col">
-                <input type="text" name="inputAddFeed" id="inputAddFeed" class="form-control" placeholder="Add a feed" v-model="inputFeed">
-            </div>
-            <div class="col-2">
-                <button type="submit" class="btn btn-primary" @click="submit">+</button>
-            </div>
-        </div>
-        <hr>
-        <div id="sidebarMenu">
-            <div class="menuElement"><span><font-awesome-icon :icon="['fas', 'home']" /> Home</span></div>
-            <div class="menuElement"><span><font-awesome-icon :icon="['fas', 'star']" /> Starred</span></div>
-            <div class="menuElement"><span><font-awesome-icon :icon="['fas', 'bookmark']" /> Bookmarked</span></div>
-        </div>
+        <v-navigation-drawer v-model="drawer" width="12.5rem" app clipped>
+            <v-list>
+                <v-list-item link>
+                    <v-list-item-action>
+                        <v-icon>mdi-view-dashboard</v-icon>
+                    </v-list-item-action>
+                    <v-list-item-content>
+                        <v-list-item-title>Dashboard</v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+                <v-list-item link>
+                    <v-list-item-action>
+                        <v-icon>mdi-settings</v-icon>
+                    </v-list-item-action>
+                    <v-list-item-content>
+                        <v-list-item-title>Settings</v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+            </v-list>
+
+            <template v-slot:append>
+                <div class="pa-2">
+                    <v-btn v-if="checkAuth" @click.native="onLogout" block>Logout</v-btn>
+                </div>
+            </template>
+        </v-navigation-drawer>
+        
+        <!-- <div id="sidebarMenu">
+            <router-link :to="{ name: 'home' }" class="menuElement"><font-awesome-icon :icon="['fas', 'home']" /> Home</router-link>
+        </div> -->
     </div>
 </template>
 
 <script>
+import FeedAdd from './FeedAdd'
+
 export default {
-    data() {
-        return {
-            inputFeed: ''
-        };
+    computed: {
+        checkAuth() {
+            return this.$store.getters.isAuthenticated
+        },
+
+        drawer: {
+                get () {
+                    return this.$store.getters.drawer
+                },
+
+                set() {}
+            }
     },
 
     methods: {
-        submit() {
-            
+        onLogout() {
+            this.$store.dispatch('logout')
         }
+    },
+
+    components: {
+        appFeedAdd: FeedAdd
     }
 }
 </script>
 
 <style scoped>
-#sidebar {
+/* #sidebar {
     height: 78vh;
     padding: 1rem 2rem 1rem 1rem;
     background-color: #121212;
@@ -43,5 +73,5 @@ export default {
 
 .menuElement {
     padding-left: 1rem;
-}
+} */
 </style>

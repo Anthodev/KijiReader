@@ -1,32 +1,37 @@
 <template>
-    <div id="feedList">
-        <app-feed-news v-for="(newsFeed, i) in feedNewsList" :key="i"></app-feed-news>
-    </div>
+    <v-row>
+        <v-expansion-panels focusable>
+            <app-feed-news v-for="(news, i) in newsfeed" :key="i" :news="news"></app-feed-news>
+        </v-expansion-panels>
+    </v-row>
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
-
 import FeedNews from './FeedNews'
 
 export default {
     data() {
         return {
-            feedNewsList: []
+            
+        }
+    },
+
+    computed: {
+        newsfeed () {
+            return this.$store.getters.newsfeed
         }
     },
 
     methods: {
-        ...mapGetters({
 
-        }),
-        ...mapActions({
-
-        })
     },
 
     components: {
         appFeedNews: FeedNews
+    },
+
+    created () {
+        this.$store.dispatch('fetchNewsfeed')
     }
 }
 </script>
