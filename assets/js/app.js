@@ -4,10 +4,10 @@
  * We recommend including the built version of this JavaScript file
  * (and its CSS file) in your base layout (base.html.twig).
  */
-
 import Vue from 'vue'
 import Vuex from 'vuex'
-import Vuelidate from "vuelidate";
+import vuetify from './plugins/vuetify'
+import Vuelidate from "vuelidate"
 import SlideUpDown from 'vue-slide-up-down'
 import App from './App.vue'
 
@@ -26,11 +26,19 @@ library.add(faHome)
 library.add(faStar)
 library.add(faBookmark)
 
+// Vue.use(Vuetify)
 Vue.use(Vuex)
 Vue.use(Vuelidate)
 
 Vue.component('slide-up-down', SlideUpDown)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
+
+axios.interceptors.response.use(function (response) {
+    return response
+}, function (error) {
+    if (error.response.status === 401) store.dispatch('logout')
+    else return Promise.reject(error)
+})
 
 if (localStorage.getItem('userToken')) axios.defaults.headers.common["Authorization"] = `Bearer ${localStorage.getItem('userToken')}`
 else delete axios.defaults.headers.common["Authorization"]
@@ -43,6 +51,7 @@ else delete axios.defaults.headers.common["Authorization"]
 
 new Vue({
     el: '#app',
+    vuetify,
     store,
     router,
     render: h => h(App)

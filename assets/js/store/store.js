@@ -8,9 +8,11 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
     state: {
+        drawer: true,
         usersCount: 0,
         userToken: null,
-        user: null
+        user: null,
+        newsfeed: []
     },
 
     modules: {
@@ -18,6 +20,10 @@ export default new Vuex.Store({
     },
 
     mutations: {
+        setDrawerStatus (state) {
+            state.drawer = !state.drawer
+        },
+
         setUsersCount (state, payload) {
             state.usersCount = payload.usersCount
         },
@@ -33,10 +39,18 @@ export default new Vuex.Store({
         clearAuthData (state) {
             state.userToken = null
             state.user = null
+        },
+
+        storeNewsfeed (state, payload) {
+            state.newsfeed = payload.newsfeed
         }
     },
 
     actions: {
+        setDrawerStatus ({ commit }) {
+            commit('setDrawerStatus')
+        },
+
         getUsersCount ({ commit }) {
             return axios.get('/user/countUsers', {})
                 .then(res => {
@@ -100,13 +114,46 @@ export default new Vuex.Store({
                 console.log(res)
                 commit("storeUser", {
                     user: res.data
-                });
+                })
+            })
+            .catch(error => console.log(error))
+        },
+
+        fetchNewsfeed ({ commit, getters }) {
+            if (!getters.userToken) return
+
+            return axios.get('/feed/newsfeed')
+            .then(res => {
+                console.log(res)
+                commit('storeNewsfeed', {
+                    newsfeed: res.data
+                })
+
+                console.log(getters.newsfeed)
+            })
+            .catch(error => console.log(error))
+        },
+
+        addFeed ({ commit, getters }, formData) {
+            if (!getters.userToken) return
+
+            return axios.post('/feed/add', {
+                feedUrl: formData.feedUrl
+            })
+            .then(res => {
+                console.log(res)
+
+                dispatch('fetchNewsfeed')
             })
             .catch(error => console.log(error))
         }
     },
 
     getters: {
+        drawer (state) {
+            return state.drawer
+        },
+
         isAuthenticated () {
             return localStorage.getItem('userToken') !== null
         },
@@ -121,6 +168,10 @@ export default new Vuex.Store({
 
         userToken () {
             return localStorage.getItem('userToken')
+        },
+
+        newsfeed (state) {
+            return state.newsfeed
         }
     }
 });

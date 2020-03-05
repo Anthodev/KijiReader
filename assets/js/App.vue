@@ -1,14 +1,16 @@
 <template>
-  <div class="container-fluid">
-    <div v-if="auth">
-      <app-header></app-header>
-      <app-main></app-main>
-      <app-footer></app-footer>
-    </div>
-    <div v-else>
-      <app-authentication></app-authentication>
-    </div>
-  </div>
+  <v-app id="app">
+    <v-content>
+      <div v-if="auth">
+        <app-header></app-header>
+        <app-main></app-main>
+        <app-footer></app-footer>
+      </div>
+      <div v-else>
+        <app-authentication></app-authentication>
+      </div>
+    </v-content>
+  </v-app>
 </template>
 
 <script>
@@ -38,16 +40,20 @@
       appFooter: Footer,
       appMain: Main,
       appAuthentication: Authentication
-    }
+    },
+
+    created () {
+        this.$vuetify.theme.dark = true
+    },
   }
 </script>
 
 <style lang="scss">
-  $font-color: #f5e2c8;
-  $bg-color: #2f2f2f;
+// $font-color: #f5e2c8;
+// $bg-color: #2f2f2f;
 
-  body {
-    background-color: $bg-color;
-    color: $font-color;
-  }
+// body {
+//   background-color: $bg-color;
+//   color: $font-color;
+// }
 </style>
