@@ -56,15 +56,22 @@ Encore
     })
 
     .configureBabel(function(babelConfig) {}, {
-        includeNodeModules: ['babel-preset-stage-2']
+        includeNodeModules: ['babel-preset-stage-2', 'vuetify']
     })
 
     // enables Sass/SCSS support
     .enableSassLoader((options) => {
-        options.implementation = require('sass'),
-        options.fiber = require('fibers')
-        // options.indentedSyntax = true
-    })
+        options.sourceMap = true
+        options.sassOptions = {
+            outputStyle: options.outputStyle,
+            sourceComments: !Encore.isProduction(),
+            implementation: require("sass"),
+            fiber: require("fibers")
+        }
+        delete options.outputStyle;
+        // options.implementation = require('sass')
+        // options.fiber = require('fibers')
+    }, {})
 
     // uncomment if you use TypeScript
     //.enableTypeScriptLoader()

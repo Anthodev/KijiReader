@@ -3,7 +3,7 @@
         <v-container>
             <v-row>
                 <v-col>
-                    <v-text-field class="mt-5" placeholder="Add a feed" :rules="[$v.inputFeed.$error]" v-model="inputFeed" @input="$v.inputFeed.$touch()"></v-text-field>
+                    <v-text-field class="mt-5" placeholder="Add a feed" v-model="inputFeed" @input="$v.inputFeed.$touch()"></v-text-field>
                     <v-divider class="mx-4" inset vertical></v-divider>
                 </v-col>
                 <v-col cols="2">

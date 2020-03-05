@@ -1,12 +1,12 @@
 <template>
-    <div class="container divAuth">
-        <div id="componentSignin" class="d-flex align-items-center justify-content-center">
-            <router-view name="signinComponent"></router-view>
-        </div>
-        <div id="componentSignup" class="d-flex align-items-center justify-content-center">
-            <router-view name="signupComponent"></router-view>
-        </div>
-    </div>
+    <v-app>
+        <v-content>
+            <v-container class="fill-height">
+                <router-view name="signinComponent"></router-view>
+                <router-view name="signupComponent"></router-view>
+            </v-container>
+        </v-content>
+    </v-app>
 </template>
 
 <script>
@@ -21,15 +21,3 @@ export default {
     }
 }
 </script>
-
-<style lang="scss" scoped>
-// .divAuth {
-//     margin-top: 50vh;
-//     display: flex;
-//     transform: translateY(-50%);
-// }
-
-// #componentSignup {
-//     margin: 0 auto;
-// }
-</style>
