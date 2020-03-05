@@ -52,8 +52,14 @@ class FeedController extends AbstractController
         $feed = $this->feedRepository->findOneByRssLink($feedUrl);
 
         if (is_null($feed)) {
+            $result = null;
+
             $feedIo = \FeedIo\Factory::create()->getFeedIo();
-            $result = $feedIo->read($feedUrl);
+            try {
+                $result = $feedIo->read($feedUrl);
+            } catch (Exception $e) {
+                return new JsonResponse($e, 404);
+            }
 
             $feed = new Feed();
 

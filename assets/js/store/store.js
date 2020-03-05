@@ -12,6 +12,7 @@ export default new Vuex.Store({
         usersCount: 0,
         userToken: null,
         user: null,
+        serverError: '',
         newsfeed: []
     },
 
@@ -22,6 +23,10 @@ export default new Vuex.Store({
     mutations: {
         setDrawerStatus (state) {
             state.drawer = !state.drawer
+        },
+
+        setServerError (state, payload) {
+            state.serverError = payload.error
         },
 
         setUsersCount (state, payload) {
@@ -49,6 +54,12 @@ export default new Vuex.Store({
     actions: {
         setDrawerStatus ({ commit }) {
             commit('setDrawerStatus')
+        },
+
+        clearServerError ({ commit }) {
+            commit('setServerError', {
+                error: ''
+            })
         },
 
         getUsersCount ({ commit }) {
@@ -134,7 +145,7 @@ export default new Vuex.Store({
             .catch(error => console.log(error))
         },
 
-        addFeed ({ commit, getters }, formData) {
+        addFeed ({ commit, getters, dispatch }, formData) {
             if (!getters.userToken) return
 
             return axios.post('/feed/add', {
@@ -145,7 +156,13 @@ export default new Vuex.Store({
 
                 dispatch('fetchNewsfeed')
             })
-            .catch(error => console.log(error))
+            .catch(error => {
+                console.log(error)
+
+                commit('setServerError', {
+                    error: error.response.status
+                })
+            })
         }
     },
 
@@ -172,6 +189,10 @@ export default new Vuex.Store({
 
         newsfeed (state) {
             return state.newsfeed
+        },
+
+        serverError (state) {
+            return state.serverError
         }
     }
 });

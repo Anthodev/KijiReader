@@ -19,7 +19,7 @@
         </slide-up-down>
     </div> -->
     <v-expansion-panel class="mx-auto newsCard" @click="openNews" outlined>
-        <v-expansion-panel-header><span class="col-10">{{ news.title }}</span><span class="text-right">Il y a {{ news.date }}</span></v-expansion-panel-header>
+        <v-expansion-panel-header><span class="col-10">{{ news.title }}</span><span class="text-right">Il y a {{ news.dateDiff }}</span></v-expansion-panel-header>
         <v-expansion-panel-content class="newsDesc">{{ news.description }}</v-expansion-panel-content>
     </v-expansion-panel>
 </template>
