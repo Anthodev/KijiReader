@@ -73,10 +73,16 @@ class User implements UserInterface, \Serializable
      */
     private $folders;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\UserStory", mappedBy="user")
+     */
+    private $userStories;
+
     public function __construct()
     {
         $this->feeds = new ArrayCollection();
         $this->folders = new ArrayCollection();
+        $this->userStories = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -287,5 +293,36 @@ class User implements UserInterface, \Serializable
             // see section on salt below
             // $this->salt
         ) = unserialize($serialized, ['allowed_classes' => false]);
+    }
+
+    /**
+     * @return Collection|UserStory[]
+     */
+    public function getUserStories(): Collection
+    {
+        return $this->userStories;
+    }
+
+    public function addUserStory(UserStory $userStory): self
+    {
+        if (!$this->userStories->contains($userStory)) {
+            $this->userStories[] = $userStory;
+            $userStory->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserStory(UserStory $userStory): self
+    {
+        if ($this->userStories->contains($userStory)) {
+            $this->userStories->removeElement($userStory);
+            // set the owning side to null (unless already changed)
+            if ($userStory->getUser() === $this) {
+                $userStory->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }
