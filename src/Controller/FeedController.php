@@ -55,6 +55,7 @@ class FeedController extends AbstractController
             $result = null;
 
             $feedIo = \FeedIo\Factory::create()->getFeedIo();
+
             try {
                 $result = $feedIo->read($feedUrl);
             } catch (Exception $e) {
@@ -67,9 +68,9 @@ class FeedController extends AbstractController
             $feed->setRssLink($feedUrl);
             $feed->setWebsite($result->getFeed()->getLink());
             $feed->addUser($user);
+            $user->addFeed($feed);
 
             $this->em->persist($feed);
-            $user->addFeed($feed);
 
             foreach ($result->getFeed() as $item) {
                 $story = new Story();

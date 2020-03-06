@@ -74,6 +74,9 @@ export default {
                     if (this.$store.getters.serverError != '') {
                         this.errorState = true
                         this.$store.dispatch('clearServerError')
+                    } else {
+                        this.$v.$reset()
+                        this.inputFeed = ''
                     }
                 })
         }

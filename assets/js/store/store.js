@@ -136,7 +136,14 @@ export default new Vuex.Store({
             return axios.get('/feed/newsfeed')
             .then(res => {
                 console.log(res)
+                // let sortedNewsfeed = res.data
+
+                // sortedNewsfeed.sort(function (a, b) {
+                //     return new Date(b.date) - new Date(a.date)
+                // })
+
                 commit('storeNewsfeed', {
+                    // newsfeed: sortedNewsfeed
                     newsfeed: res.data
                 })
 
