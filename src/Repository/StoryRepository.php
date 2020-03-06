@@ -2,9 +2,10 @@
 
 namespace App\Repository;
 
+use App\Entity\User;
 use App\Entity\Story;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method Story|null find($id, $lockMode = null, $lockVersion = null)
@@ -47,4 +48,19 @@ class StoryRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function findAllStoriesForUser(User $user, ?int $offset = 0, int $limit = 25)
+    {
+        return $this->createQueryBuilder('s')
+            ->leftJoin('s.feed', 'f')
+            ->addSelect('s', 'f as feed')
+            ->where(':user MEMBER OF f.users')
+            ->orderBy('s.date', 'DESC')
+            ->setParameters(['user' => $user])
+            ->setFirstResult($offset)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

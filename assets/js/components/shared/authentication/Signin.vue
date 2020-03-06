@@ -8,14 +8,15 @@
                 </v-toolbar>
                 <v-card-text>
                     <v-form id="signinForm" @keyup.native.enter="onSubmit" @submit.prevent="onSubmit">
-                        <v-text-field id="username" label="Login" name="username" prepend-icon="person" type="text" v-model="username" @blur="$v.username.$touch()" :error-messages="usernameErrors" placeholder="Enter your username" required autofocus></v-text-field>
+                        <v-text-field id="username" label="Login" name="username" prepend-icon="mdi-account" type="text" v-model="username" @blur="$v.username.$touch()" :error-messages="usernameErrors" placeholder="Enter your username" required autofocus></v-text-field>
 
-                        <v-text-field id="login-password" label="Password" name="password" prepend-icon="lock" type="password" v-model="password" @blur="$v.password.$touch()" :error-messages="passwordErrors" placeholder="Enter your password"></v-text-field>
+                        <v-text-field id="password" label="Password" name="password" prepend-icon="mdi-lock" type="password" v-model="password" @blur="$v.password.$touch()" :error-messages="passwordErrors" placeholder="Enter your password"></v-text-field>
                     </v-form>
                 </v-card-text>
                 <v-card-actions>
+                    <v-card-text class="caption"><router-link :to="{ name: 'signup' }">Create an account</router-link></v-card-text>
                     <v-spacer />
-                    <v-btn form="signinForm" type="submit" color="primary" :disabled="$v.$invalid">Login</v-btn>
+                    <v-btn form="signinForm" type="submit" color="primary" :disabled="$v.$invalid" :loading="loading">Login</v-btn>
                 </v-card-actions>
             </v-card>
         </v-col>
@@ -33,7 +34,8 @@
         data() {
             return {
                 username: '',
-                password: ''
+                password: '',
+                loading: false
             }
         },
 
@@ -76,15 +78,19 @@
         methods: {
             onSubmit() {
                 this.$v.$touch()
+                this.loading = !this.loading
 
-                if (this.$v.$error) return
+                if (this.$v.$error) {
+                    this.loading = !this.loading
+                    return
+                }
 
                 const formData = {
                     username: this.username,
                     password: this.password
                 }
 
-                this.$store.dispatch('login', formData)
+                this.$store.dispatch('login', formData).then(this.loading = true)
             }
         }
     }
