@@ -1,6 +1,6 @@
 <template>
-    <v-expansion-panel class="mx-auto newsCard" @click="openNews" outlined>
-        <v-expansion-panel-header>
+    <v-expansion-panel class="mx-auto newsCard" outlined>
+        <v-expansion-panel-header :class="{ 'newsReadMarker': !attachReadMarker }" @click="openNews">
             <v-chip class="ml-n3" color="indigo"  small pill label>{{ news.feed_name }}</v-chip>
             <span class="col-10">{{ news.title }}</span>
             <span class="text-right">Il y a {{ news.dateDiff }}</span>
@@ -20,7 +20,7 @@ export default {
     data() {
         return {
             openState: false,
-            attachReadMarker: true,
+            attachReadMarker: this.news.read
         }
     },
 
@@ -32,10 +32,8 @@ export default {
 
     methods: {
         openNews() {
-            this.attachReadMarker = false
+            this.attachReadMarker = true
         },
-
-
     }
 }
 </script>
@@ -45,7 +43,11 @@ export default {
     text-overflow: ellipsis;
 }
 
+.newsReadMarker {
+    border-left: 0.5em solid darkred;
+}
+
 .newsDesc {
-    margin-top: 0.5rem;
+    margin-top: 0.25rem;
 }
 </style>
