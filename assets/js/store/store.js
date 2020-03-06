@@ -48,6 +48,10 @@ export default new Vuex.Store({
 
         storeNewsfeed (state, payload) {
             state.newsfeed = payload.newsfeed
+        },
+
+        storeMoreNewsfeed (state, payload) {
+            Array.prototype.push.apply(state.newsfeed, payload.newsfeed)
         }
     },
 
@@ -130,22 +134,23 @@ export default new Vuex.Store({
             .catch(error => console.log(error))
         },
 
-        fetchNewsfeed ({ commit, getters }) {
+        fetchNewsfeed ({ commit, getters }, offset = 0) {
             if (!getters.userToken) return
 
-            return axios.get('/feed/newsfeed')
+            return axios.get('/feed/newsfeed/' + offset)
             .then(res => {
                 console.log(res)
-                // let sortedNewsfeed = res.data
 
-                // sortedNewsfeed.sort(function (a, b) {
-                //     return new Date(b.date) - new Date(a.date)
-                // })
-
-                commit('storeNewsfeed', {
-                    // newsfeed: sortedNewsfeed
-                    newsfeed: res.data
-                })
+                if (offset === 0) {
+                    commit('storeNewsfeed', {
+                        // newsfeed: sortedNewsfeed
+                        newsfeed: res.data
+                    })
+                } else {
+                    commit('storeMoreNewsfeed', {
+                        newsfeed: res.data
+                    })
+                }
 
                 console.log(getters.newsfeed)
             })

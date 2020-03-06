@@ -23,7 +23,7 @@ class FeedFetcher {
         $this->em = $em;
     }
 
-    public function getNewsfeed(User $user)
+    public function getNewsfeed(User $user, $offset = 0)
     {
         $newsfeed = [];
 
@@ -48,7 +48,7 @@ class FeedFetcher {
             $this->em->flush();
             $this->em->clear();
 
-            $stories = $this->storyRepository->findAllStoriesForUser($user);
+            $stories = $this->storyRepository->findAllStoriesForUser($user, $offset);
 
             if (!is_null($stories)) {
                 foreach ($stories as $story) {

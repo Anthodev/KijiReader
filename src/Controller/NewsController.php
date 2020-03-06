@@ -25,14 +25,14 @@ class NewsController extends AbstractController
     }
     
     /**
-     * @Route("/feed/newsfeed", methods={"GET"})
+     * @Route("/feed/newsfeed/{offset}", defaults={"offset"=0}, methods={"GET"})
      */
-    public function getNewsfeed()
+    public function getNewsfeed($offset)
     {
         $jsonResponse = null;
 
         try {
-            $jsonResponse = new JsonResponse($this->feedFetcher->getNewsfeed($this->getUser()), 200);
+            $jsonResponse = new JsonResponse($this->feedFetcher->getNewsfeed($this->getUser(), $offset), 200);
         } catch (Exception $e) {
             $jsonResponse = new JsonResponse(\json_encode($e), 403);
         }
