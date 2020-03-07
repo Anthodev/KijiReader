@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Repository\StoryRepository;
 use App\Repository\UserStoryRepository;
 use App\Utils\FeedFetcher;
+use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,12 +20,14 @@ class StoryController extends AbstractController
 {
     private $feedFetcher;
     private $userStoryRepository;
+    private $em;
 
-    public function __construct(StoryRepository $storyRepository, UserStoryRepository $userStoryRepository, FeedFetcher $feedFetcher)
+    public function __construct(StoryRepository $storyRepository, UserStoryRepository $userStoryRepository, FeedFetcher $feedFetcher, EntityManagerInterface $em)
     {
         $this->storyRepository = $storyRepository;
         $this->userStoryRepository = $userStoryRepository;
         $this->feedFetcher = $feedFetcher;
+        $this->em = $em;
     }
     
     /**
@@ -49,8 +52,9 @@ class StoryController extends AbstractController
     public function setMarkAsRead($id)
     {
         try {
-            $userStory = $this->userStoryRepository->findOneBy($id);
+            $userStory = $this->userStoryRepository->find($id);
             $userStory->setReadStatus(true);
+            $this->em->flush();
 
             return new JsonResponse([
                 'message' => 'success'

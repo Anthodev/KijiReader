@@ -184,7 +184,7 @@ export default new Vuex.Store({
             })
         },
 
-        setMarkAsRead({}, id) {
+        setMarkAsRead({ commit, getters }, id) {
             if (!getters.userToken) return;
 
             return axios.post("/story/markread/" + id)
