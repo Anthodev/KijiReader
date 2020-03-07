@@ -182,6 +182,22 @@ export default new Vuex.Store({
                     error: error.response.status
                 })
             })
+        },
+
+        setMarkAsRead({}, id) {
+            if (!getters.userToken) return;
+
+            return axios.post("/story/markread/" + id)
+            .then(res => {
+                console.log(res);
+            })
+            .catch(error => {
+                console.log(error);
+
+                commit("setServerError", {
+                    error: error.response.status
+                });
+            });
         }
     },
 
