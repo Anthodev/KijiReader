@@ -44,16 +44,6 @@ class Story
     private $date;
 
     /**
-     * @ORM\Column(type="boolean")
-     */
-    private $starred;
-
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $seen;
-
-    /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Feed", inversedBy="stories")
      * @ORM\JoinColumn(nullable=false)
      */
@@ -118,30 +108,6 @@ class Story
     public function setDate(\DateTimeInterface $date): self
     {
         $this->date = $date;
-
-        return $this;
-    }
-
-    public function getStarred(): ?bool
-    {
-        return $this->starred;
-    }
-
-    public function setStarred(bool $starred): self
-    {
-        $this->starred = $starred;
-
-        return $this;
-    }
-
-    public function getSeen(): ?bool
-    {
-        return $this->seen;
-    }
-
-    public function setSeen(bool $seen): self
-    {
-        $this->seen = $seen;
 
         return $this;
     }

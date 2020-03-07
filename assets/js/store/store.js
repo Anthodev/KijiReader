@@ -139,21 +139,28 @@ export default new Vuex.Store({
 
             return axios.get('/feed/newsfeed/' + offset)
             .then(res => {
-                console.log(res)
+                console.log(res);
+
+                let sortedNewsfeed = res.data
+
+                sortedNewsfeed.sort(function (a, b) {
+                    return b.story.date.timestamp - a.story.date.timestamp
+                })
 
                 if (offset === 0) {
-                    commit('storeNewsfeed', {
-                        // newsfeed: sortedNewsfeed
-                        newsfeed: res.data
-                    })
+                    commit("storeNewsfeed", {
+                        newsfeed: sortedNewsfeed
+                        // newsfeed: res.data
+                    });
                 } else {
-                    commit('storeMoreNewsfeed', {
-                        newsfeed: res.data
-                    })
+                    commit("storeMoreNewsfeed", {
+                        newsfeed: sortedNewsfeed
+                        // newsfeed: res.data
+                    });
                 }
 
-                console.log(getters.newsfeed)
-            })
+                console.log(getters.newsfeed);
+                })
             .catch(error => console.log(error))
         },
 

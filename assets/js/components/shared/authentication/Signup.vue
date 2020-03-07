@@ -10,7 +10,7 @@
                     <v-form id="signupForm" @keyup.native.enter="onSubmit" @submit.prevent="onSubmit">
                         <v-text-field id="username" label="Login" name="username" prepend-icon="mdi-account" type="text" v-model="username" @blur="$v.username.$touch()" :error-messages="usernameErrors" placeholder="Enter your username" required autofocus></v-text-field>
 
-                        <v-text-field id="email" label="Login" name="email" prepend-icon="mdi-at" type="text" v-model="email" @blur="$v.email.$touch()" :error-messages="emailErrors" placeholder="Enter your email" required></v-text-field>
+                        <v-text-field id="email" label="Email" name="email" prepend-icon="mdi-at" type="text" v-model="email" @blur="$v.email.$touch()" :error-messages="emailErrors" placeholder="Enter your email" required></v-text-field>
 
                         <v-text-field id="password" label="Password" name="password" prepend-icon="mdi-lock" type="password" v-model="password" @blur="$v.password.$touch()" :error-messages="passwordErrors" placeholder="Enter a password" required></v-text-field>
                         <v-progress-linear :value="passwordLengthProgress" :color="colorPassword" height="7"></v-progress-linear>
