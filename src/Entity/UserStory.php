@@ -18,19 +18,16 @@ class UserStory
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="userStories")
-     * @ORM\JoinColumn(nullable=false)
      */
     private $user;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Feed")
-     * @ORM\JoinColumn(nullable=false)
      */
     private $feed;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Story")
-     * @ORM\JoinColumn(nullable=false)
      */
     private $story;
 
@@ -43,6 +40,16 @@ class UserStory
      * @ORM\Column(type="boolean", nullable=false)
      */
     private $readStatus;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $createdAt;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $updatedAt;
 
     public function getId(): ?int
     {
@@ -105,6 +112,30 @@ class UserStory
     public function setReadStatus(bool $readStatus): self
     {
         $this->readStatus = $readStatus;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(\DateTimeInterface $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }

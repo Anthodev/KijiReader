@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use Exception;
 use App\Entity\Feed;
-use App\Entity\Story;
 use App\Utils\FeedFetcher;
 use App\Repository\FeedRepository;
 use App\Repository\StoryRepository;
@@ -72,17 +71,6 @@ class FeedController extends AbstractController
 
             $this->em->persist($feed);
 
-            foreach ($result->getFeed() as $item) {
-                $story = new Story();
-                $story->setTitle($item->getTitle());
-                $story->setContent($item->getDescription());
-                $story->setUrl($item->getLink());
-                $story->setDate($item->getLastModified());
-                $story->setFeed($feed);
-                $feed->addStory($story);
-                $this->em->persist($story);
-            }
-
             $this->em->flush();
 
             return new JsonResponse($feed, 200);
@@ -112,8 +100,10 @@ class FeedController extends AbstractController
      */
     public function getFeed($id)
     {
+        $user = $this->getUser();
+
         try {
-            $newsList = $this->feedFetcher->getFeed($id);
+            $newsList = $this->feedFetcher->getFeed($user, $id);
 
             return new JsonResponse($newsList, 200);
         } catch (Exception $e) {

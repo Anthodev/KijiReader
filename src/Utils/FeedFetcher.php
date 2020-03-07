@@ -4,33 +4,40 @@ namespace App\Utils;
 
 use App\Entity\User;
 use App\Entity\Story;
+use App\Entity\UserStory;
 use App\Repository\FeedRepository;
 use App\Repository\StoryRepository;
-use DateTime;
-use Doctrine\Common\Collections\ArrayCollection;
+use App\Repository\UserStoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
 
 class FeedFetcher {
 
     private $feedRepository;
     private $storyRepository;
+    private $userStoryRepository;
     private $em;
 
-    public function __construct(FeedRepository $feedRepository, StoryRepository $storyRepository, EntityManagerInterface $em)
+    public function __construct(FeedRepository $feedRepository, StoryRepository $storyRepository, UserStoryRepository $userStoryRepository, EntityManagerInterface $em)
     {
         $this->feedRepository = $feedRepository;
         $this->storyRepository = $storyRepository;
+        $this->userStoryRepository = $userStoryRepository;
         $this->em = $em;
     }
 
     public function getNewsfeed(User $user, $offset = 0)
     {
-        $newsfeed = [];
+        $newsfeed = '';
 
         $feedIo = \FeedIo\Factory::create()->getFeedIo();
         $feeds = $user->getFeeds();
+        $userStories = $this->userStoryRepository->findByUser($user);
 
-        if (!is_null($feeds)) {
+        if ($feeds->count() > 0) {
             foreach ($feeds as $feed) {
                 $stories = $feed->getStories();
                 if ($stories->count() > 0) $lastStory = $stories->first();
@@ -41,44 +48,29 @@ class FeedFetcher {
                 else $result = $feedIo->read(($feed->getRssLink()));
 
                 foreach ($result->getFeed() as $item) {
-                    $this->addStoryToDb($feed, $item);
+                    $this->addStoryToDb($user, $feed, $item);
                 }
             }
 
             $this->em->flush();
             $this->em->clear();
 
-            $stories = $this->storyRepository->findAllStoriesForUser($user, $offset);
+            // $stories = $this->storyRepository->findAllStoriesForUser($user, $offset);
+            $userStories = $user->getUserStories();
 
-            if (!is_null($stories)) {
-                foreach ($stories as $story) {
-                    // dd($story);
-                    $date = new \DateTime();
-                    $dateDiff = $date->diff($story->getDate())->format('%H');
+            if (!is_null($userStories)) {
+                $normalizer = new ObjectNormalizer();
+                $encoder = new JsonEncoder();
 
-                    if ($dateDiff != 0) $dateDiff = $date->diff($story->getDate())->format('%Hh%im');
-                    else $dateDiff = $date->diff($story->getDate())->format('%i minutes');
-
-                    $newsfeed[] = array(
-                        'title' => $story->getTitle(),
-                        'description' => $story->getContent(),
-                        'url' => $story->getUrl(),
-                        'date' => $story->getDate()->format('Y-m-d H:i:s'),
-                        'dateDiff' => $dateDiff,
-                        'read' => $story->getSeen(),
-                        'starred' => $story->getStarred(),
-                        'feed_id' => $story->getFeed()->getId(),
-                        'feed_name' => $story->getFeed()->getName(),
-                        'feed_website' => $story->getFeed()->getWebsite()
-                    );
-                }
+                $serializer = new Serializer([$normalizer], [$encoder]);
+                $newsfeed = $serializer->normalize($userStories, 'json', [AbstractNormalizer::ATTRIBUTES => ['feed' => ['id', 'name', 'website'], 'story' => ['id', 'title', 'url', 'content', 'date'], 'starred', 'readStatus']]);
             }
         }
 
         return $newsfeed;
     }
 
-    public function getFeed($feedId)
+    public function getFeed($user, $feedId)
     {
         $feedIo = \FeedIo\Factory::create()->getFeedIo();
         $feed = $this->feedRepository->find($feedId);
@@ -93,7 +85,7 @@ class FeedFetcher {
         else $result = $feedIo->read($feed->getRssLink());
 
         foreach ($result->getFeed() as $item) {
-            $newsList[] = $this->addStory($feed, $item);
+            $newsList[] = $this->addStoryToDb($user, $feed, $item);
         }
 
         $this->em->flush();
@@ -121,51 +113,30 @@ class FeedFetcher {
         return $feeds;
     }
 
-    public function addStory($feed, $item)
+    public function addStoryToDb($user, $feed, $item)
     {
         $story = new Story();
         $story->setTitle($item->getTitle());
         $story->setContent($item->getDescription());
         $story->setUrl($item->getLink());
-        $story->setDate($item->getLastModified());
+
+        $story->setDate(new \DateTime());
+        if (!is_null($item->getLastModified())) $story->setDate($item->getLastModified());
+
         $story->setFeed($feed);
         $feed->addStory($story);
 
         $this->em->persist($story);
 
-        $date = new \DateTime();
-        $dateDiff = $date->diff($story->getDate())->format('%H');
+        $userStory = new UserStory();
+        $userStory->setUser($user);
+        $userStory->setFeed($feed);
+        $userStory->setStory($story);
+        $userStory->setStarred(false);
+        $userStory->setReadStatus(false);
+        $user->addUserStory($userStory);
 
-        if ($dateDiff != 0) $dateDiff = $date->diff($story->getDate())->format('%Hh%im');
-        else $dateDiff = $date->diff($story->getDate())->format('%i minutes');
-
-        $currentStory = array(
-            'title' => $story->getTitle(),
-            'description' => $story->getContent(),
-            'url' => $story->getUrl(),
-            'date' => $story->getDate()->format('Y-m-d H:i:s'),
-            'dateDiff' => $dateDiff,
-            'read' => $story->getSeen(),
-            'starred' => $story->getStarred(),
-            'feed_id' => $story->getFeed()->getId(),
-            'feed_name' => $story->getFeed()->getName(),
-            'feed_website' => $story->getFeed()->getWebsite()
-        );
-
-        return $currentStory;
-    }
-
-    public function addStoryToDb($feed, $item)
-    {
-        $story = new Story();
-        $story->setTitle($item->getTitle());
-        $story->setContent($item->getDescription());
-        $story->setUrl($item->getLink());
-        $story->setDate($item->getLastModified());
-        $story->setFeed($feed);
-        $feed->addStory($story);
-
-        $this->em->persist($story);
+        $this->em->persist($userStory);
     }
 
 }

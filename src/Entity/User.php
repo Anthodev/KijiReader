@@ -75,6 +75,7 @@ class User implements UserInterface, \Serializable
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\UserStory", mappedBy="user")
+     * @ORM\OrderBy({"story" = "DESC"})
      */
     private $userStories;
 
