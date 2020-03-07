@@ -63,7 +63,7 @@ class FeedFetcher {
                 $encoder = new JsonEncoder();
 
                 $serializer = new Serializer([$normalizer], [$encoder]);
-                $newsfeed = $serializer->normalize($userStories, 'json', [AbstractNormalizer::ATTRIBUTES => ['feed' => ['id', 'name', 'website'], 'story' => ['id', 'title', 'url', 'content', 'date'], 'starred', 'readStatus']]);
+                $newsfeed = $serializer->normalize($userStories, 'json', [AbstractNormalizer::ATTRIBUTES => ['id', 'feed' => ['id', 'name', 'website'], 'story' => ['id', 'title', 'url', 'content', 'date'], 'starred', 'readStatus']]);
             }
         }
 
