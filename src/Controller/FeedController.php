@@ -4,14 +4,18 @@ namespace App\Controller;
 
 use Exception;
 use App\Entity\Feed;
-use App\Utils\FeedFetcher;
+use App\Utils\FeedHandler;
 use App\Repository\FeedRepository;
-use App\Repository\StoryRepository;
+use App\Repository\UserStoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
@@ -19,15 +23,16 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
  */
 class FeedController extends AbstractController
 {
-    private $feedFetcher;
+    private $feedHandler;
     private $feedRepository;
+    private $userStoryRepository;
     private $em;
 
-    public function __construct(FeedFetcher $feedFetcher, FeedRepository $feedRepository, StoryRepository $storyRepository, EntityManagerInterface $em)
+    public function __construct(FeedHandler $feedHandler, FeedRepository $feedRepository, UserStoryRepository $userStoryRepository, EntityManagerInterface $em)
     {
-        $this->feedFetcher = $feedFetcher;
+        $this->feedHandler = $feedHandler;
         $this->feedRepository = $feedRepository;
-        $this->storyRepository = $storyRepository;
+        $this->userStoryRepository = $userStoryRepository;
         $this->em = $em;
     }
 
@@ -87,7 +92,7 @@ class FeedController extends AbstractController
     public function getFeeds()
     {
         try {
-            $newsList = $this->feedFetcher->getFeeds($this->getUser());
+            $newsList = $this->feedHandler->getFeeds($this->getUser());
 
             return new JsonResponse($newsList, 200);
         } catch (Exception $e) {
@@ -103,9 +108,14 @@ class FeedController extends AbstractController
         $user = $this->getUser();
 
         try {
-            $newsList = $this->feedFetcher->getFeed($user, $id);
+            $feed = $this->feedRepository->find($id);
 
-            return new JsonResponse($newsList, 200);
+            $userStories = $this->feedHandler->retrieveFeed($feed, $user);
+
+            $this->em->flush();
+            $this->em->clear();
+            
+            return new JsonResponse($userStories, 200);
         } catch (Exception $e) {
             return new JsonResponse(\json_encode($e), 403);
         }

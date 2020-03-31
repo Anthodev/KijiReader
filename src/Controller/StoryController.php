@@ -2,14 +2,18 @@
 
 namespace App\Controller;
 
+use Exception;
+use App\Utils\FeedHandler;
 use App\Repository\StoryRepository;
 use App\Repository\UserStoryRepository;
-use App\Utils\FeedFetcher;
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
+use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
@@ -18,15 +22,15 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
  */
 class StoryController extends AbstractController
 {
-    private $feedFetcher;
+    private $feedHandler;
     private $userStoryRepository;
     private $em;
 
-    public function __construct(StoryRepository $storyRepository, UserStoryRepository $userStoryRepository, FeedFetcher $feedFetcher, EntityManagerInterface $em)
+    public function __construct(StoryRepository $storyRepository, UserStoryRepository $userStoryRepository, FeedHandler $feedHandler, EntityManagerInterface $em)
     {
         $this->storyRepository = $storyRepository;
         $this->userStoryRepository = $userStoryRepository;
-        $this->feedFetcher = $feedFetcher;
+        $this->feedHandler = $feedHandler;
         $this->em = $em;
     }
     
@@ -35,10 +39,26 @@ class StoryController extends AbstractController
      */
     public function getNewsfeed($offset)
     {
+        $user = $this->getUser();
+
         $jsonResponse = null;
 
         try {
-            $jsonResponse = new JsonResponse($this->feedFetcher->getNewsfeed($this->getUser(), $offset), 200);
+            $feeds = $user->getFeeds();
+            $userStories = $this->userStoryRepository->findByUser($user);
+
+            if ($feeds->count() > 0) {
+                foreach ($feeds as $feed) {
+                    $this->feedHandler->retrieveFeed($feed, $user);
+                }
+
+                $this->em->flush();
+                $this->em->clear();
+                
+                $userStories = $user->getUserStories();
+            }
+
+            $jsonResponse = new JsonResponse($userStories, 200);
         } catch (Exception $e) {
             $jsonResponse = new JsonResponse(\json_encode($e), 403);
         }

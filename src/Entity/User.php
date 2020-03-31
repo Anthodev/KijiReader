@@ -59,22 +59,22 @@ class User implements UserInterface, \Serializable
     private $updatedAt;
 
     /**
-     * @ORM\OneToOne(targetEntity="App\Entity\Settings", mappedBy="user", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity="App\Entity\Settings", mappedBy="user", cascade={"persist", "remove"}, fetch="EAGER")
      */
     private $settings;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Feed", mappedBy="users")
+     * @ORM\ManyToMany(targetEntity="App\Entity\Feed", mappedBy="users", fetch="EAGER")
      */
     private $feeds;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Folder", mappedBy="user", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\Folder", mappedBy="user", orphanRemoval=true, fetch="EAGER")
      */
     private $folders;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\UserStory", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="App\Entity\UserStory", mappedBy="user", fetch="EAGER")
      * @ORM\OrderBy({"story" = "DESC"})
      */
     private $userStories;
