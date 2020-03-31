@@ -21,6 +21,7 @@ class FeedHandlerTest extends KernelTestCase
         $this->em = $kernel->getContainer()->get('doctrine')->getManager();
         $this->feedIo = $kernel->getContainer()->get('feedio');
         $this->feedHandler = new FeedHandler($this->em, $this->feedIo);
+        parent::setUp();
     }
 
     /**
