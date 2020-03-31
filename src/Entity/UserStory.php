@@ -22,12 +22,12 @@ class UserStory
     private $user;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Feed")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Feed", fetch="EAGER")
      */
     private $feed;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Story")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Story", fetch="EAGER")
      */
     private $story;
 

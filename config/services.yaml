@@ -35,3 +35,6 @@ services:
         tags:
             - { name: doctrine.event_listener, event: prePersist }
             - { name: doctrine.event_listener, event: preUpdate }
+
+    App\Utils\FeedHandler:
+        arguments: ['@doctrine.orm.entity_manager']
