@@ -4,7 +4,8 @@ export const state = () => ({
     userToken: null,
     user: null,
     serverError: '',
-    newsfeed: []
+    newsfeed: [],
+    alert: null
 })
 
 export const mutations = {
@@ -39,6 +40,10 @@ export const mutations = {
 
     SET_MORE_NEWSFEED(state, payload) {
         Array.prototype.push.apply(state.newsfeed, payload.newsfeed)
+    },
+
+    SET_ALERT(state, payload) {
+        state.alert = payload.alert
     }
 }
 
@@ -75,17 +80,16 @@ export const actions = {
             .catch(error => console.log(error))
     },
 
-    async LOGIN({ commit, getters, redirect, dispatch }, authData) {
+    async LOGIN({ commit, getters }, authData) {
         const data = await this.$axios.$post('/auth/login_check', {
             username: authData.username,
             password: authData.password
         })
-        console.log(data)
 
         commit('SET_USER_TOKEN', data.token)
 
         localStorage.setItem('userToken', data.token)
-        this.$axios.setToken(getters.userToken, 'Bearer')
+        this.$axios.setToken(data.token, 'Bearer')
 
         this.$router.go('/')
     },
@@ -96,17 +100,17 @@ export const actions = {
 
         commit('DELETE_AUTH_DATA')
 
-        router.go({ name: 'signin' })
+        this.$router.go('/signin')
     },
 
     async FETCH_USER({ commit, getters }) {
         if (!getters.userToken) return
 
-        return await await this.$axios.$get('/user/profile')
+        return await this.$axios.$get('/user/profile')
             .then(res => {
                 console.log(res)
                 commit("SET_USER", {
-                    user: res.data
+                    user: res
                 })
             })
             .catch(error => console.log(error))
@@ -115,37 +119,37 @@ export const actions = {
     async FETCH_NEWSFEED({ commit, getters }, offset = 0) {
         if (!getters.userToken) return
 
-        return await this.$axios.$get('/feed/newsfeed/' + offset)
-            .then(res => {
-                console.log(res);
+        let data = await this.$axios.$get('/feed/newsfeed/' + offset)
+            .then((res) => {
+                // console.log(res);
 
-                let sortedNewsfeed = res.data
+                // let sortedNewsfeed = res.data
 
-                sortedNewsfeed.sort(function (a, b) {
-                    return b.story.date.timestamp - a.story.date.timestamp
-                })
+                // sortedNewsfeed.sort(function (a, b) {
+                //     return b.story.date.timestamp - a.story.date.timestamp
+                // })
 
                 if (offset === 0) {
                     commit("SET_NEWSFEED", {
-                        newsfeed: sortedNewsfeed
+                        newsfeed: res
                         // newsfeed: res.data
                     });
                 } else {
                     commit("SET_MORE_NEWSFEED", {
-                        newsfeed: sortedNewsfeed
+                        newsfeed: res
                         // newsfeed: res.data
                     });
                 }
-
-                console.log(getters.newsfeed);
             })
             .catch(error => console.log(error))
+        
+        return data
     },
 
-    ADD_FEED({ commit, getters, dispatch }, formData) {
+    async ADD_FEED({ commit, getters, dispatch }, formData) {
         if (!getters.userToken) return
 
-        return this.$axios.$post('/feed/add', {
+        return await this.$axios.$post('/feed/add', {
             feedUrl: formData.feedUrl
         })
             .then(res => {
@@ -159,13 +163,14 @@ export const actions = {
                 commit('SET_SERVER_ERROR', {
                     error: error.response.status
                 })
-            })
+            }
+        )
     },
 
-    SET_MARK_AS_READ({ commit, getters }, id) {
+    async SET_MARK_AS_READ({ commit, getters }, id) {
         if (!getters.userToken) return;
 
-        return this.$axios.$post("/story/markread/" + id)
+        return await this.$axios.$post("/story/markread/" + id)
             .then(res => {
                 console.log(res);
             })
@@ -174,8 +179,14 @@ export const actions = {
 
                 commit("SET_SERVER_ERROR", {
                     error: error.response.status
-                });
-            });
+                })
+            })
+    },
+
+    SET_ALERT({ commit }, alert) {
+        commit("SET_ALERT", {
+            alert: alert
+        })
     }
 }
 
@@ -184,7 +195,7 @@ export const getters = {
         return state.drawer
     },
 
-    isAuthenticated() {
+    isAuthenticated(state) {
         return state.userToken != null
     },
 
@@ -196,7 +207,7 @@ export const getters = {
         return state.user
     },
 
-    userToken() {
+    userToken(state) {
         return state.userToken
     },
 

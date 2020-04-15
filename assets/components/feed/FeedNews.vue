@@ -1,5 +1,5 @@
 <template>
-    <v-expansion-panel class="mx-auto newsCard" outlined>
+    <v-expansion-panel class="mx-auto newsCard mb-1" outlined>
         <v-expansion-panel-header :class="{ 'newsReadMarker': !attachReadMarker }" @click="showContent">
             <v-chip class="col-1 ma-n3" color="indigo"  small pill label>{{ news.feed.name }}</v-chip>
             <span class="col-9">{{ news.story.title }}</span>
@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { formatDistanceToNow } from 'date-fns'
+import { formatDistanceToNow, parseISO } from 'date-fns'
 
 export default {
     props: ['news'],
@@ -22,24 +22,28 @@ export default {
     data() {
         return {
             openState: false,
-            attachReadMarker: this.news.readStatus
+            attachReadMarker: this.news.read_status,
         }
     },
 
     computed: {
         dateAgo() {
-            return formatDistanceToNow(new Date(this.news.story.date.timestamp * 1000))
+            return formatDistanceToNow(parseISO(this.news.story.date))
         }
     },
 
     methods: {
         showContent() {
             if (!this.attachReadMarker) {
-                this.$store.dispatch('setMarkAsRead', this.news.id)
+                this.attachReadMarker = !this.attachReadMarker
+                this.$store.dispatch('SET_MARK_AS_READ', this.news.id)
                     .then(request => {
                         if (this.$store.getters.serverError == '') {
+                            this.$store.dispatch('SET_ALERT', { message: 'The news is marked as read', type: 'success' })
+                            this.$store.dispatch('DELETE_SERVER_ERROR')
+                        } else {
                             this.attachReadMarker = !this.attachReadMarker
-                            this.$store.dispatch('clearServerError')
+                            this.$store.dispatch('DELETE_SERVER_ERROR')
                         }
                     })
             }

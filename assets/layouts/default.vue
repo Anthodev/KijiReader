@@ -1,10 +1,11 @@
 <template>
   <v-app id="app">
-    <v-content>
+    <v-content id="content">
         <app-header />
-        <app-content>
+        <v-container class="fill-height ml-8" fluid>
+          <app-sidebar />
           <Nuxt />
-        </app-content>
+        </v-container>
         <app-footer />
     </v-content>
   </v-app>
@@ -13,15 +14,25 @@
 <script>
   import Header from '../components/shared/Header.vue'
   import Footer from '../components/shared/Footer.vue'
-  import Content from '../components/shared/Content.vue'
+  import Sidebar from '../components/shared/Sidebar.vue'
 
   export default {
     name: 'KijiReader',
+
+    props: {
+        source: String,
+    },
 
     data() {
       return {
         
       }
+    },
+
+    methods: {
+        fetchUser() {
+            this.$store.dispatch('FETCH_USER')
+        }
     },
 
     computed: {
@@ -33,11 +44,17 @@
     components: {
       appHeader: Header,
       appFooter: Footer,
-      appContent: Content
+      appSidebar: Sidebar,
     },
 
-    created () {
-        this.$vuetify.theme.dark = true
-    },
+    async mounted() {
+        if (this.$store.getters.user == null) this.fetchUser()
+    }
   }
 </script>
+
+<style lang="stylus" scoped>
+#content {
+  padding-right: 64px !important;
+}
+</style>

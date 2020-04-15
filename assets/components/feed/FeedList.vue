@@ -1,16 +1,16 @@
 <template>
-    <v-responsive class="overflow-y-auto">
-        <v-lazy :options="{ threshold: .1 }">
-            <v-expansion-panels :key="feedListKey" focusable>
-                <app-feed-news v-for="(news, i) in newsfeed" :key="i" :news="news"></app-feed-news>
-                <v-row v-intersect.quiet="onBottomFeed" id="bottom"></v-row>
-            </v-expansion-panels>
-        </v-lazy>
+    <v-responsive class="overflow-y-auto" min-height="300">
+        <v-expansion-panels popout focusable>
+            <LazyHydrate when-visible class="feednewsComponent" v-for="(news, i) in newsfeed" :key="i">
+                <app-feed-news :news="news"/>
+            </LazyHydrate>
+        </v-expansion-panels>
     </v-responsive>
 </template>
 
 <script>
 import FeedNews from './FeedNews'
+import LazyHydrate from 'vue-lazy-hydration';
 
 export default {
     data() {
@@ -30,9 +30,9 @@ export default {
 
     methods: {
         onBottomFeed(entries, observer, isIntersecting) {
-            if (isIntersecting && this.offset % 25 == 0) {
+            if (isIntersecting && this.offset % 50 == 0) {
                 this.offset = this.newsfeed.length
-                this.$store.dispatch('fetchNewsfeed', this.newsfeed.length)
+                this.$store.dispatch('FETCH_NEWSFEED', this.newsfeed.length)
                     .then(
                         this.feedListKey += 1
                     )
@@ -41,15 +41,18 @@ export default {
     },
 
     components: {
-        appFeedNews: FeedNews
+        appFeedNews: FeedNews,
+        LazyHydrate
     },
 
     async mounted () {
-        this.$store.dispatch('fetchNewsfeed')
+        this.$store.dispatch('FETCH_NEWSFEED')
     }
 }
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+.feednewsComponent {
+    width: 100%;
+}
 </style>

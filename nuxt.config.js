@@ -35,7 +35,9 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
-    { src: '~/plugins/vuelidate', mode: 'client', ssr: false }
+    { src: '~/plugins/vuelidate', mode: 'client', ssr: false },
+    { src: '~/plugins/vuetify' },
+    { src: '~/plugins/axios' }
   ],
   /*
   ** Nuxt.js dev-modules
@@ -55,17 +57,17 @@ export default {
     '/api': {
       target: 'https://docker.app.localhost',
       pathRewrite: {
-        '^/api/': ''
+        '^/api': ''
       },
       changeOrigin: true
     }
   },
 
   axios: {
-    proxy: false,
-    baseURL: 'https://docker.app.localhost',
-    browserBaseURL: 'https://docker.app.localhost',
-    debug: true,
+    proxy: true,
+    baseURL: 'https://docker.app.localhost/api',
+    browserBaseURL: 'https://docker.app.localhost/api',
+    debug: false,
     headers: {
       common: {
         'Content-Type': 'application/json',
@@ -106,6 +108,10 @@ export default {
     ** You can extend webpack config here
     */
     extend (config, ctx) {
+      if (ctx.isDev) {
+        config.devtool = ctx.isClient ? 'source-map' : 'inline-source-map'
+      }
+      
       vendor: [
         'axios',
         'vuelidate'

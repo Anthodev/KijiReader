@@ -53,7 +53,7 @@ export default {
 
     methods: {
         onLogout() {
-            this.$store.dispatch('logout')
+            this.$store.dispatch('LOGOUT')
         }
     },
 

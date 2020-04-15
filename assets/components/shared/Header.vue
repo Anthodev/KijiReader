@@ -26,27 +26,23 @@ export default {
             },
 
             set () {
-                this.$store.dispatch('setDrawerStatus')
+                this.$store.dispatch('SET_DRAWER_STATUS')
             }
         }
     },
 
     methods: {
         setDrawerStatus () {
-            this.$store.dispatch('setDrawerStatus')
+            this.$store.dispatch('SET_DRAWER_STATUS')
         },
 
         onLogout() {
-            this.$store.dispatch('logout')
+            this.$store.dispatch('LOGOUT')
         }
     },
 
     components: {
         appFeedAdd: FeedAdd
-    },
-
-    created () {
-        this.$vuetify.theme.dark = true
     },
 }
 </script>

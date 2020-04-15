@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use Exception;
 use App\Entity\Feed;
-use App\Utils\FeedFetcher;
+use App\Utils\FeedHandler;
 use App\Repository\FeedRepository;
 use App\Repository\StoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -19,13 +19,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
  */
 class FeedController extends AbstractController
 {
-    private $feedFetcher;
+    private $feedHandler;
     private $feedRepository;
     private $em;
 
-    public function __construct(FeedFetcher $feedFetcher, FeedRepository $feedRepository, StoryRepository $storyRepository, EntityManagerInterface $em)
+    public function __construct(FeedHandler $feedHandler, FeedRepository $feedRepository, StoryRepository $storyRepository, EntityManagerInterface $em)
     {
-        $this->feedFetcher = $feedFetcher;
+        $this->feedHandler = $feedHandler;
         $this->feedRepository = $feedRepository;
         $this->storyRepository = $storyRepository;
         $this->em = $em;
@@ -87,7 +87,7 @@ class FeedController extends AbstractController
     public function getFeeds()
     {
         try {
-            $newsList = $this->feedFetcher->getFeeds($this->getUser());
+            $newsList = $this->feedHandler->getFeeds($this->getUser());
 
             return new JsonResponse($newsList, 200);
         } catch (Exception $e) {
@@ -103,7 +103,7 @@ class FeedController extends AbstractController
         $user = $this->getUser();
 
         try {
-            $newsList = $this->feedFetcher->getFeed($user, $id);
+            $newsList = $this->feedHandler->getFeed($user, $id);
 
             return new JsonResponse($newsList, 200);
         } catch (Exception $e) {

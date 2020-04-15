@@ -1,8 +1,7 @@
 <template>
-    <v-row class="col-4">
-        <v-btn color="warning" large>Mark everything as read</v-btn>
-        <v-spacer></v-spacer>
-        <v-select class="pa-0" :items="selectFilters" label="Show news since..." disabled solo dense hide-details></v-select>
+    <v-row class="mt-7 mb-2 ml-1">
+        <v-btn class="mr-2" color="warning" normal>Mark everything as read</v-btn>
+        <v-select class="pa-0 col-3" :items="selectFilters" label="Show news since..." disabled solo dense hide-details></v-select>
     </v-row>
 </template>
 

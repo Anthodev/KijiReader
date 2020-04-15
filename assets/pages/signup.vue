@@ -1,5 +1,5 @@
 <template>
-    <v-row>
+    <v-card class="elevation-12">
         <v-toolbar color="indigo" dark flat>
             <v-toolbar-title>KijiReader - Create an account</v-toolbar-title>
             <v-spacer />
@@ -22,7 +22,7 @@
             <v-spacer></v-spacer>
             <v-btn form="signupForm" type="submit" color="primary" :loading="loading" :disabled="$v.$invalid">Create an account</v-btn>
         </v-card-actions>
-    </v-row>
+    </v-card>
 </template>
 
 <script>

@@ -4,13 +4,16 @@ namespace App\Controller;
 
 use App\Repository\StoryRepository;
 use App\Repository\UserStoryRepository;
-use App\Utils\FeedFetcher;
+use App\Utils\FeedHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use JMS\Serializer\SerializationContext;
+use JMS\Serializer\SerializerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @IsGranted("IS_AUTHENTICATED_FULLY")
@@ -18,16 +21,17 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
  */
 class StoryController extends AbstractController
 {
-    private $feedFetcher;
+    private $feedHandler;
     private $userStoryRepository;
     private $em;
+    private $serializer;
 
-    public function __construct(StoryRepository $storyRepository, UserStoryRepository $userStoryRepository, FeedFetcher $feedFetcher, EntityManagerInterface $em)
+    public function __construct(UserStoryRepository $userStoryRepository, FeedHandler $feedHandler, EntityManagerInterface $em, SerializerInterface $serializer)
     {
-        $this->storyRepository = $storyRepository;
         $this->userStoryRepository = $userStoryRepository;
-        $this->feedFetcher = $feedFetcher;
+        $this->feedHandler = $feedHandler;
         $this->em = $em;
+        $this->serializer = $serializer;
     }
     
     /**
@@ -35,15 +39,36 @@ class StoryController extends AbstractController
      */
     public function getNewsfeed($offset)
     {
-        $jsonResponse = null;
+        $user = $this->getUser();
+
+        $response = null;
 
         try {
-            $jsonResponse = new JsonResponse($this->feedFetcher->getNewsfeed($this->getUser(), $offset), 200);
-        } catch (Exception $e) {
-            $jsonResponse = new JsonResponse(\json_encode($e), 403);
-        }
+            $feeds = $user->getFeeds();
 
-        return $jsonResponse;
+            if ($feeds->count() > 0) {
+                foreach ($feeds as $feed) {
+                    $this->feedHandler->processFeed($feed, $user);
+                }
+
+                $this->em->flush();
+                $this->em->clear();
+            }
+
+            // $userStories = $user->getUserStories();
+            $userStories = $this->userStoryRepository->findLimitedUserStories($user, $offset);
+            // $userStories = $this->userStoryRepository->findBy(['user' => $user], ['story.date' => 'DESC']);
+
+            $serializeUserStories = $this->serializer->serialize($userStories, 'json', SerializationContext::create()->enableMaxDepthChecks());
+
+            $response = new Response($serializeUserStories);
+            $response->setStatusCode(Response::HTTP_OK);
+            $response->headers->set('Content-Type', 'application/json');
+        } catch (Exception $e) {
+            $response = new JsonResponse($e, 403);
+        }
+        
+        return $response;
     }
 
     /**

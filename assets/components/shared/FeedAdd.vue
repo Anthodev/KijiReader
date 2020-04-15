@@ -32,7 +32,7 @@ export default {
     computed: {
         inputFeedErrors() {
             const errors = []
-            if (!this.$v.inputFeed.$dirty) return errors
+            if (!this.$v.inputFeed.$dirty || this.inputFeed == '') return errors
 
             !this.$v.inputFeed.required && errors.push('Enter a feed url.')
             !this.$v.inputFeed.isFeed && errors.push('The url isn\'t in a valid format.')
@@ -67,13 +67,13 @@ export default {
                 feedUrl: this.inputFeed
             }
 
-            this.$store.dispatch('addFeed', formData)
+            this.$store.dispatch('ADD_FEED', formData)
                 .then(request => {
                     this.loading = !this.loading
 
                     if (this.$store.getters.serverError != '') {
                         this.errorState = true
-                        this.$store.dispatch('clearServerError')
+                        this.$store.dispatch('DELETE_SERVER_ERROR')
                     } else {
                         this.$v.$reset()
                         this.inputFeed = ''
