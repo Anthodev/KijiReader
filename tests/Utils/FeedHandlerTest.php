@@ -45,15 +45,9 @@ class FeedHandlerTest extends KernelTestCase
      */
     public function testFetchFeed($feedResource)
     {
-        // $feedUrl = 'http://www.jeuxvideo.com/rss/rss.xml';
-        // $result = null;
-        
-        // $result = $this->feedHandler->getFeed($feedUrl);
-
         $feed = new Feed();
         $feed->setName($feedResource->getFeed()->getTitle());
         $feed->setRssLink($feedResource->getUrl());
-        // $feed->setRssLink($feedUrl);
         
         $this->assertNotEmpty($feedResource->getFeed()->getTitle());
 

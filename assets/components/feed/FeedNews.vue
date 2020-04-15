@@ -39,10 +39,10 @@ export default {
                 this.$store.dispatch('SET_MARK_AS_READ', this.news.id)
                     .then(request => {
                         if (this.$store.getters.serverError == '') {
-                            this.$store.dispatch('SET_ALERT', { message: 'The news is marked as read', type: 'success' })
                             this.$store.dispatch('DELETE_SERVER_ERROR')
                         } else {
                             this.attachReadMarker = !this.attachReadMarker
+                            this.$toast.error('Error marking the news as read.')
                             this.$store.dispatch('DELETE_SERVER_ERROR')
                         }
                     })

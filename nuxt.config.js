@@ -50,7 +50,8 @@ export default {
   */
   modules: [
     '@nuxtjs/axios',
-    '@nuxtjs/proxy'
+    '@nuxtjs/proxy',
+    '@nuxtjs/toast'
   ],
 
   proxy: {
@@ -74,6 +75,11 @@ export default {
         'Accept': 'application/json, */*'
       }
     }
+  },
+
+  toast: {
+    position: 'top-center',
+    duration: 5000
   },
 
   router: {
