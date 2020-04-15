@@ -87,5 +87,7 @@ class FeedHandler
                 $this->addUserStory($user, $feed, $story);
             }
         }
+
+        return $user->getUserStories();
     }
 }

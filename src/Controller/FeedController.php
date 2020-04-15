@@ -6,6 +6,7 @@ use Exception;
 use App\Entity\Feed;
 use App\Utils\FeedHandler;
 use App\Repository\FeedRepository;
+use App\Repository\UserStoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -20,12 +21,14 @@ class FeedController extends AbstractController
 {
     private $feedHandler;
     private $feedRepository;
+    private $userStoryRepository;
     private $em;
 
-    public function __construct(FeedHandler $feedHandler, FeedRepository $feedRepository, EntityManagerInterface $em)
+    public function __construct(FeedHandler $feedHandler, FeedRepository $feedRepository, UserStoryRepository $userStoryRepository, EntityManagerInterface $em)
     {
         $this->feedHandler = $feedHandler;
         $this->feedRepository = $feedRepository;
+        $this->userStoryRepository = $userStoryRepository;
         $this->em = $em;
     }
 
@@ -101,12 +104,11 @@ class FeedController extends AbstractController
         $user = $this->getUser();
 
         try {
-            $feed = $this->feedHandler->getFeed($user, $id);
+            $feed = $this->feedRepository->find($id);
 
-            $userStories = $this->feedHandler->processFeed($feed, $user);
+            $this->feedHandler->processFeed($feed, $user);
 
-            $this->em->flush();
-            $this->em->clear();
+            $userStories = $this->userStoryRepository->findBy(['feed' => $feed, 'user' => $user], ['date' => 'DESC']);
             
             return new JsonResponse($userStories, 200);
         } catch (Exception $e) {
