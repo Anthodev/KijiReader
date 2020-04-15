@@ -11,7 +11,6 @@ use FeedIo\FeedIo;
 
 class FeedHandler
 {
-
     private $em;
     private $feedIo;
 
@@ -24,7 +23,7 @@ class FeedHandler
     public function getFeed($feedUrl, $date = null)
     {
         $feed = null;
-
+      
         if (!is_null($date)) $feed = $this->feedIo->readSince($feedUrl, $date);
         else $feed = $this->feedIo->read($feedUrl);
 
@@ -53,7 +52,7 @@ class FeedHandler
 
         $this->em->persist($story);
         $this->em->persist($feed);
-
+      
         return $story;
     }
 
@@ -81,7 +80,7 @@ class FeedHandler
 
         if ($stories->count() > 0) $result = $this->getFeed($feed->getRssLink(), $lastStory->getDate());
         else $result = $this->getFeed($feed->getRssLink());
-
+      
         if (!is_null($result)) {
             foreach ($result->getFeed() as $item) {
                 $story = $this->addStory($feed, $item);
