@@ -6,16 +6,11 @@ use Exception;
 use App\Entity\Feed;
 use App\Utils\FeedHandler;
 use App\Repository\FeedRepository;
-use App\Repository\UserStoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
@@ -25,14 +20,12 @@ class FeedController extends AbstractController
 {
     private $feedHandler;
     private $feedRepository;
-    private $userStoryRepository;
     private $em;
 
-    public function __construct(FeedHandler $feedHandler, FeedRepository $feedRepository, StoryRepository $storyRepository, EntityManagerInterface $em)
+    public function __construct(FeedHandler $feedHandler, FeedRepository $feedRepository, EntityManagerInterface $em)
     {
         $this->feedHandler = $feedHandler;
         $this->feedRepository = $feedRepository;
-        $this->userStoryRepository = $userStoryRepository;
         $this->em = $em;
     }
 
@@ -108,9 +101,9 @@ class FeedController extends AbstractController
         $user = $this->getUser();
 
         try {
-            $newsList = $this->feedHandler->getFeed($user, $id);
+            $feed = $this->feedHandler->getFeed($user, $id);
 
-            $userStories = $this->feedHandler->retrieveFeed($feed, $user);
+            $userStories = $this->feedHandler->processFeed($feed, $user);
 
             $this->em->flush();
             $this->em->clear();
