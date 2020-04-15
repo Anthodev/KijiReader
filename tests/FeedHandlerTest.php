@@ -92,7 +92,7 @@ class FeedHandlerTest extends KernelTestCase
      * @depends testFetchFeed
      * @return void 
      */
-    public function testRetrieveFeed($feed)
+    public function testProcessFeed($feed)
     {
         $user = new User();
         $user->setUsername('Test');
@@ -101,7 +101,7 @@ class FeedHandlerTest extends KernelTestCase
         $user->addFeed($feed);
         $feed->addUser($user);
 
-        $userStories = $this->feedHandler->retrieveFeed($feed, $user);
+        $userStories = $this->feedHandler->processFeed($feed, $user);
         $this->em->clear();
 
         $this->assertNotNull($userStories);
