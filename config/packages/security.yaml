@@ -14,7 +14,7 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         login:
-            pattern: ^/auth/login
+            pattern: ^/api/auth/login
             stateless: true
             anonymous: true
             provider: app_user_provider
@@ -25,7 +25,7 @@ security:
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
         main:
-            pattern: ^/
+            pattern: ^/api/
             anonymous: true
             stateless: true
             provider: app_user_provider

@@ -6,7 +6,6 @@ use App\Entity\Feed;
 use App\Entity\User;
 use App\Utils\FeedHandler;
 use PHPUnit\Framework\ExpectationFailedException;
-use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class FeedHandlerTest extends KernelTestCase
@@ -102,7 +101,7 @@ class FeedHandlerTest extends KernelTestCase
         $user->addFeed($feed);
         $feed->addUser($user);
 
-        $userStories = $this->feedHandler->retrieveFeed($feed, $user);
+        $userStories = $this->feedHandler->processFeed($feed, $user);
         $this->em->clear();
 
         $this->assertNotNull($userStories);

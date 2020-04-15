@@ -8,14 +8,10 @@ use App\Utils\FeedHandler;
 use App\Repository\FeedRepository;
 use App\Repository\UserStoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
@@ -110,10 +106,9 @@ class FeedController extends AbstractController
         try {
             $feed = $this->feedRepository->find($id);
 
-            $userStories = $this->feedHandler->retrieveFeed($feed, $user);
+            $this->feedHandler->processFeed($feed, $user);
 
-            $this->em->flush();
-            $this->em->clear();
+            $userStories = $this->userStoryRepository->findBy(['feed' => $feed, 'user' => $user], ['date' => 'DESC']);
             
             return new JsonResponse($userStories, 200);
         } catch (Exception $e) {

@@ -7,12 +7,10 @@ use App\Entity\User;
 use App\Entity\Story;
 use App\Entity\UserStory;
 use Doctrine\ORM\EntityManagerInterface;
-use FeedIo\Adapter\Guzzle\Client;
 use FeedIo\FeedIo;
-use Psr\Log\NullLogger;
 
-class FeedHandler {
-    
+class FeedHandler
+{
     private $em;
     private $feedIo;
 
@@ -25,16 +23,7 @@ class FeedHandler {
     public function getFeed($feedUrl, $date = null)
     {
         $feed = null;
-
-        // if($_ENV['APP_ENV'] == 'test') {
-        //     $guzzle = new \GuzzleHttp\Client();
-        //     $client = new Client($guzzle);
-        //     $logger = new NullLogger();
-        //     $feedIo = new FeedIo($client, $logger);
-        // } else {
-        //     $feedIo = \FeedIo\Factory::create()->getFeedIo();
-        // }
-
+        
         if (!is_null($date)) $feed = $this->feedIo->readSince($feedUrl, $date);
         else $feed = $this->feedIo->read($feedUrl);
 
@@ -83,14 +72,14 @@ class FeedHandler {
         return $userStory;
     }
 
-    public function retrieveFeed(Feed $feed, User $user)
+    public function processFeed(Feed $feed, User $user)
     {
         $stories = $feed->getStories();
         $lastStory = $stories->first();
         $result = null;
 
         if ($stories->count() > 0) $result = $this->getFeed($feed->getRssLink(), $lastStory->getDate());
-        $result = $this->getFeed($feed->getRssLink());
+        else $result = $this->getFeed($feed->getRssLink());
         
         if (!is_null($result)) {
             foreach ($result->getFeed() as $item) {
@@ -99,9 +88,6 @@ class FeedHandler {
             }
         }
 
-        $userStories = $user->getUserStories();
-
-        return $userStories;
+        return $user->getUserStories();
     }
-
 }

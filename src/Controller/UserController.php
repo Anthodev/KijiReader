@@ -100,14 +100,17 @@ class UserController extends AbstractController
     /**
      * @Route("/countUsers", methods={"GET"})
      * @IsGranted("IS_AUTHENTICATED_ANONYMOUSLY")
-     * @param mixed $roleCode 
-     * @return mixed|Role 
      */
     public function getUsersCount()
     {
         return new JsonResponse(count($this->userRepository->findAll()), 200);
     }
 
+    /**
+     * 
+     * @param mixed $roleCode 
+     * @return mixed|Role 
+     */
     public function getUserRole($roleCode)
     {
         $role = $this->roleRepository->findOneByName($roleCode);

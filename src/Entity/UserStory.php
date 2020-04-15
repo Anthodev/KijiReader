@@ -3,9 +3,11 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserStoryRepository")
+ * @Serializer\ExclusionPolicy("all")
  */
 class UserStory
 {
@@ -13,6 +15,7 @@ class UserStory
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Serializer\Expose
      */
     private $id;
 
@@ -22,22 +25,29 @@ class UserStory
     private $user;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Feed", fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Feed")
+     * @Serializer\Expose
+     * @Serializer\MaxDepth(1)
      */
     private $feed;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Story", fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Story")
+     * @ORM\OrderBy({"date" = "DESC"})
+     * @Serializer\Expose
+     * @Serializer\MaxDepth(1)
      */
     private $story;
 
     /**
      * @ORM\Column(type="boolean", nullable=false)
+     * @Serializer\Expose
      */
     private $starred;
 
     /**
      * @ORM\Column(type="boolean", nullable=false)
+     * @Serializer\Expose
      */
     private $readStatus;
 
