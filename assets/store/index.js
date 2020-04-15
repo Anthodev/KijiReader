@@ -4,8 +4,7 @@ export const state = () => ({
     userToken: null,
     user: null,
     serverError: '',
-    newsfeed: [],
-    alert: null
+    newsfeed: []
 })
 
 export const mutations = {
@@ -40,10 +39,6 @@ export const mutations = {
 
     SET_MORE_NEWSFEED(state, payload) {
         Array.prototype.push.apply(state.newsfeed, payload.newsfeed)
-    },
-
-    SET_ALERT(state, payload) {
-        state.alert = payload.alert
     }
 }
 
@@ -181,12 +176,6 @@ export const actions = {
                     error: error.response.status
                 })
             })
-    },
-
-    SET_ALERT({ commit }, alert) {
-        commit("SET_ALERT", {
-            alert: alert
-        })
     }
 }
 

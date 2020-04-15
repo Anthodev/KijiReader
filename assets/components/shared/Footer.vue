@@ -1,17 +1,23 @@
 <template>
-  <v-footer app>
-      <span>&copy; 2019</span>
-  </v-footer>
+  <v-row>
+    <v-footer app>
+      <v-row>
+        <span>&copy; {{ new Date().getFullYear() }}</span>
+      </v-row>
+    </v-footer>
+  </v-row>
 </template>
 
 <script>
-  export default {
-    data() {
-      return {
+// import Alert from './Alert'
 
-      }
+export default {
+  data() {
+    return {
+
     }
-  }
+  },
+}
 </script>
 
 <style scoped>
