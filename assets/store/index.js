@@ -4,7 +4,8 @@ export const state = () => ({
     userToken: null,
     user: null,
     serverError: '',
-    newsfeed: []
+    newsfeed: [],
+    loadingState: null
 })
 
 export const mutations = {
@@ -39,6 +40,10 @@ export const mutations = {
 
     SET_MORE_NEWSFEED(state, payload) {
         Array.prototype.push.apply(state.newsfeed, payload.newsfeed)
+    },
+
+    SET_LOADING_STATE(state, payload) {
+        state.loadingState = payload.loadingState
     }
 }
 
@@ -176,6 +181,12 @@ export const actions = {
                     error: error.response.status
                 })
             })
+    },
+
+    SET_LOADING_STATE({ commit }, loadingState) {
+        commit("SET_LOADING_STATE", {
+            loadingState: loadingState
+        })
     }
 }
 
@@ -206,5 +217,9 @@ export const getters = {
 
     serverError(state) {
         return state.serverError
+    },
+
+    loadingState(state) {
+        return state.loadingState
     }
 }
