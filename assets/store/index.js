@@ -5,7 +5,10 @@ export const state = () => ({
     user: null,
     serverError: '',
     newsfeed: [],
-    loadingState: null
+    loadingState: {
+        loading: false,
+        type: ''
+    }
 })
 
 export const mutations = {
@@ -59,7 +62,7 @@ export const actions = {
     },
 
     async GET_USERCOUNT({ commit }) {
-        const data =  await this.$axios.$get('/user/countUsers', {})
+        const data =  await this.$axios.$get('/api/user/countUsers', {})
         
         commit('SET_USERCOUNT', {
             usersCount: data
@@ -67,7 +70,7 @@ export const actions = {
     },
 
     async SIGNUP({ commit, dispatch }, authData) {
-        return await this.$axios.$post('/user/new', {
+        return await this.$axios.$post('/api/user/new', {
             username: authData.username,
             email: authData.email,
             password: authData.password,
@@ -81,7 +84,7 @@ export const actions = {
     },
 
     async LOGIN({ commit, getters }, authData) {
-        const data = await this.$axios.$post('/auth/login_check', {
+        const data = await this.$axios.$post('/api/auth/login_check', {
             username: authData.username,
             password: authData.password
         })
@@ -106,7 +109,7 @@ export const actions = {
     async FETCH_USER({ commit, getters }) {
         if (!getters.userToken) return
 
-        return await this.$axios.$get('/user/profile')
+        return await this.$axios.$get('/api/user/profile')
             .then(res => {
                 console.log(res)
                 commit("SET_USER", {
@@ -119,26 +122,16 @@ export const actions = {
     async FETCH_NEWSFEED({ commit, getters }, offset = 0) {
         if (!getters.userToken) return
 
-        let data = await this.$axios.$get('/feed/newsfeed/' + offset)
+        let data = await this.$axios.$get('/api/feed/newsfeed/' + offset)
             .then((res) => {
-                // console.log(res);
-
-                // let sortedNewsfeed = res.data
-
-                // sortedNewsfeed.sort(function (a, b) {
-                //     return b.story.date.timestamp - a.story.date.timestamp
-                // })
-
                 if (offset === 0) {
                     commit("SET_NEWSFEED", {
                         newsfeed: res
-                        // newsfeed: res.data
-                    });
+                    })
                 } else {
                     commit("SET_MORE_NEWSFEED", {
                         newsfeed: res
-                        // newsfeed: res.data
-                    });
+                    })
                 }
             })
             .catch(error => console.log(error))
@@ -149,7 +142,7 @@ export const actions = {
     async ADD_FEED({ commit, getters, dispatch }, formData) {
         if (!getters.userToken) return
 
-        return await this.$axios.$post('/feed/add', {
+        return await this.$axios.$post('/api/feed/add', {
             feedUrl: formData.feedUrl
         })
             .then(res => {
@@ -170,7 +163,7 @@ export const actions = {
     async SET_MARK_AS_READ({ commit, getters }, id) {
         if (!getters.userToken) return;
 
-        return await this.$axios.$post("/story/markread/" + id)
+        return await this.$axios.$post("/api/story/markread/" + id)
             .then(res => {
                 console.log(res);
             })

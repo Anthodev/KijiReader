@@ -1,26 +1,26 @@
 <template>
-    <v-row>
-        <app-feed-bar />
-        <app-feed-list />
-    </v-row>
+  <v-row>
+    <app-feed-bar />
+    <app-feed-list />
+  </v-row>
 </template>
 
 <script>
-import FeedBar from '../components/feed/FeedBar'
-import FeedList from '../components/feed/FeedList'
-
 export default {
-    layout: 'default',
+  layout: 'default',
 
-    methods: {
-        fetchNews() {
-            this.$store.dispatch('FETCH_NEWSFEED')
-        }
-    },
+  components: {
+    appFeedBar: () => import('../components/feed/FeedBar'),
+    appFeedList: () => import('../components/feed/FeedList'),
+  },
 
-    components: {
-        appFeedBar: FeedBar,
-        appFeedList: FeedList,
-    }
+  async mounted() {
+    this.$store.dispatch('FETCH_NEWSFEED').then(() => {
+        this.$store.dispatch('SET_LOADING_STATE', {
+          loading: false,
+          type: ""
+        })
+      })
+  }
 }
 </script>

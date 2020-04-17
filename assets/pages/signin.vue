@@ -88,7 +88,15 @@
                     password: this.password
                 }
 
-                this.$store.dispatch('LOGIN', formData).then(this.loading = true)
+                this.$store.dispatch('LOGIN', formData).then(() => {
+                    this.$store.dispatch('SET_LOADING_STATE', {
+                        loadingState: {
+                            loading: true,
+                            type: "card-heading, list-item@6, text"
+                        }
+                    })
+                    this.loading = true
+                })
             }
         }
     }

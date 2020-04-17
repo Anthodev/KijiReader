@@ -23,7 +23,6 @@
         "nuxt": "^2.11.0",
         "stylus": "^0.54.7",
         "stylus-loader": "^3.0.2",
-        "vue-lazy-hydration": "^1.0.0-beta.12",
         "vuelidate": "^0.7.5"
     },
     "devDependencies": {

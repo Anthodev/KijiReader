@@ -21,7 +21,6 @@ export default {
 
     data() {
         return {
-            openState: false,
             attachReadMarker: this.news.read_status,
         }
     },
@@ -37,7 +36,7 @@ export default {
             if (!this.attachReadMarker) {
                 this.attachReadMarker = !this.attachReadMarker
                 this.$store.dispatch('SET_MARK_AS_READ', this.news.id)
-                    .then(request => {
+                    .then(() => {
                         if (this.$store.getters.serverError == '') {
                             this.$store.dispatch('DELETE_SERVER_ERROR')
                         } else {

@@ -3,7 +3,7 @@ import colors from 'vuetify/es5/util/colors'
 export default {
   mode: 'spa',
   buildDir: './public/build',
-  srcDir: './assets',
+  srcDir: './assets',  
   /*
   ** Headers of the page
   */
@@ -56,7 +56,7 @@ export default {
 
   proxy: {
     '/api': {
-      target: 'https://docker.app.localhost',
+      target: 'http://localhost/api',
       pathRewrite: {
         '^/api': ''
       },
@@ -65,9 +65,8 @@ export default {
   },
 
   axios: {
-    proxy: true,
-    baseURL: 'https://docker.app.localhost/api',
-    browserBaseURL: 'https://docker.app.localhost/api',
+    proxy: false,
+    // baseURL: 'http://localhost/api',
     debug: false,
     headers: {
       common: {
