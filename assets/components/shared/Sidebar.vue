@@ -4,10 +4,10 @@
       <v-list>
         <v-list-item link>
           <v-list-item-action>
-            <v-icon>mdi-view-dashboard</v-icon>
+            <v-icon>mdi-home</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title>Dashboard</v-list-item-title>
+            <v-list-item-title>All elements</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
         <v-list-item link>
@@ -68,6 +68,14 @@ export default {
 
   components: {
     appFeedAdd: FeedAdd
+  },
+
+  async mounted() {
+    let self = this
+
+    setInterval(function(){
+      console.log('test interval')
+    }, 15000)
   }
 }
 </script>
