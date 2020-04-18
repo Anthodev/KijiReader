@@ -16,11 +16,11 @@ export default {
 
   async mounted() {
     this.$store.dispatch('FETCH_NEWSFEED').then(() => {
-        this.$store.dispatch('SET_LOADING_STATE', {
-          loading: false,
-          type: ""
-        })
+      this.$store.dispatch('SET_LOADING_STATE', {
+        loading: false,
+        type: ""
       })
+    })
   }
 }
 </script>

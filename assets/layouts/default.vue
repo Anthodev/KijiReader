@@ -1,5 +1,5 @@
 <template>
-  <v-app id="app">
+  <v-app id="app" v-if="auth">
     <v-skeleton-loader
       class="my-auto mx-auto"
       :loading="loadingState.loading"
@@ -8,65 +8,68 @@
       :type="loadingState.type"
     >
       <v-content id="content">
-          <app-header />
-          <v-container class="fill-height ml-8" fluid>
-            <app-sidebar />
-            <Nuxt />
-          </v-container>
-          <app-footer />
+        <app-header />
+        <v-container class="fill-height ml-8" fluid>
+          <app-sidebar />
+          <Nuxt />
+        </v-container>
+        <app-footer />
       </v-content>
     </v-skeleton-loader>
+  </v-app>
+  <v-app v-else>
+    <v-skeleton-loader
+      class="my-auto mx-auto"
+      loading="true"
+      transition-group="fade-transition"
+      width="33%"
+      type="card-heading, list-item-avatar@2, actions"
+    />
   </v-app>
 </template>
 
 <script>
-  import Header from '../components/shared/Header.vue'
-  import Footer from '../components/shared/Footer.vue'
-  import Sidebar from '../components/shared/Sidebar.vue'
+import Header from '../components/shared/Header.vue'
+import Footer from '../components/shared/Footer.vue'
+import Sidebar from '../components/shared/Sidebar.vue'
 
-  export default {
-    name: 'KijiReader',
+export default {
+  name: 'KijiReader',
 
-    props: {
-        source: String,
-    },
+  props: {
+    source: String,
+  },
 
-    data() {
-      return {
-        
-      }
-    },
-
-    methods: {
-        fetchUser() {
-            this.$store.dispatch('FETCH_USER')
-        }
-    },
-
-    computed: {
-      auth () {
-        return this.$store.getters.isAuthenticated
-      },
-
-      loadingState() {
-        return this.$store.getters.loadingState
-      }
-    },
-
-    components: {
-      appHeader: Header,
-      appFooter: Footer,
-      appSidebar: Sidebar,
-    },
-
-    async mounted() {
-      if (this.$store.getters.user == null) this.fetchUser()
-
-      this.$store.dispatch('SET_LOADING_STATE', {
-        loading: true,
-        type: "card-heading, list-item@6, text"
-      })
+  methods: {
+    fetchUser() {
+      this.$store.dispatch('FETCH_USER')
     }
+  },
+
+  computed: {
+    auth () {
+      return this.$store.getters.isAuthenticated
+    },
+
+    loadingState() {
+      return this.$store.getters.loadingState
+    }
+  },
+
+  components: {
+    appHeader: Header,
+    appFooter: Footer,
+    appSidebar: Sidebar,
+  },
+
+  async mounted() {
+    if (this.$store.getters.user == null) this.fetchUser()
+
+    this.$store.dispatch('SET_LOADING_STATE', {
+      loading: true,
+      type: "card-heading, list-item@6, text"
+    })
+  }
   }
 </script>
 

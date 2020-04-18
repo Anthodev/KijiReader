@@ -14,90 +14,96 @@
         <v-card-actions>
             <v-card-text class="caption"><nuxt-link to="/signup">Create an account</nuxt-link></v-card-text>
             <v-spacer />
-            <v-btn form="signinForm" type="submit" color="primary" :disabled="$v.$invalid" :loading="loading">Login</v-btn>
+            <v-btn form="signinForm" type="submit" color="primary" :disabled="$v.$invalid" :loading="formLoading">Login</v-btn>
         </v-card-actions>
     </v-card>
 </template>
 
 <script>
-    import {
-        required,
-        alphaNum,
-        minLength
-    } from 'vuelidate/lib/validators'
+import {
+  required,
+  alphaNum,
+  minLength
+} from 'vuelidate/lib/validators'
 
-    export default {
-        layout: 'auth',
+export default {
+  layout: 'auth',
 
-        data() {
-            return {
-                username: '',
-                password: '',
-                loading: false
-            }
-        },
-
-        computed: {
-            usernameErrors () {
-                const errors = []
-                if (!this.$v.username.$dirty) return errors
-
-                !this.$v.username.required && errors.push('Username is required.')
-                !this.$v.username.alphaNum && errors.push('Username must be alphabetical and/or numerical.')
-                !this.$v.username.minLength && errors.push('Username must be 4 characters minimum.')
-
-                return errors
-            },
-
-            passwordErrors() {
-                const errors = []
-                if (!this.$v.password.$dirty) return errors
-
-                !this.$v.password.required && errors.push('Password is required.')
-                !this.$v.password.minLength && errors.push('Password must be 8 characters minimum.')
-
-                return errors
-            }
-        },
-
-        validations: {
-            username: {
-                required,
-                alphaNum,
-                minLength: minLength(4)
-            },
-
-            password: {
-                required,
-                minLength: minLength(6)
-            }
-        },
-
-        methods: {
-            onSubmit() {
-                this.$v.$touch()
-                this.loading = !this.loading
-
-                if (this.$v.$error) {
-                    this.loading = !this.loading
-                    return
-                }
-
-                const formData = {
-                    username: this.username,
-                    password: this.password
-                }
-
-                this.$store.dispatch('LOGIN', formData).then(() => {
-                    this.$store.dispatch('SET_LOADING_STATE', {
-                        loadingState: {
-                            loading: true,
-                            type: "card-heading, list-item@6, text"
-                        }
-                    })
-                    this.loading = true
-                })
-            }
-        }
+  data() {
+    return {
+      username: '',
+      password: '',
+      formLoading: false
     }
+  },
+
+  computed: {
+    usernameErrors () {
+      const errors = []
+      if (!this.$v.username.$dirty) return errors
+
+      !this.$v.username.required && errors.push('Username is required.')
+      !this.$v.username.alphaNum && errors.push('Username must be alphabetical and/or numerical.')
+      !this.$v.username.minLength && errors.push('Username must be 4 characters minimum.')
+
+      return errors
+    },
+
+    passwordErrors() {
+      const errors = []
+      if (!this.$v.password.$dirty) return errors
+
+      !this.$v.password.required && errors.push('Password is required.')
+      !this.$v.password.minLength && errors.push('Password must be 8 characters minimum.')
+
+      return errors
+    }
+  },
+
+  validations: {
+    username: {
+      required,
+      alphaNum,
+      minLength: minLength(4)
+    },
+
+    password: {
+      required,
+      minLength: minLength(6)
+    }
+  },
+
+  methods: {
+    onSubmit() {
+      this.$v.$touch()
+      this.formLoading = !this.formLoading
+
+      if (this.$v.$error) {
+        this.formLoading = !this.formLoading
+        return
+      }
+
+      const formData = {
+        username: this.username,
+        password: this.password
+      }
+
+      this.$store.dispatch('LOGIN', formData).then(() => {
+        this.formLoading = true
+
+        this.$store.dispatch('SET_LOADING_STATE', {
+          loading: true,
+          type: 'card-heading, list-item@6, text'
+        })
+      })
+    }
+  },
+
+  async mounted() {
+    this.$store.dispatch('SET_LOADING_STATE', {
+      loading: false,
+      type: ''
+    })
+  }
+}
 </script>
