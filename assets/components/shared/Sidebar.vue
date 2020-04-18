@@ -22,7 +22,8 @@
 
       <template v-slot:append>
         <div class="pa-2">
-          <v-btn v-if="checkAuth" @click.native="onLogout" block>Logout</v-btn>
+          <nuxt-link to="/settings"><v-btn v-if="checkAuth" class="mb-2" color="primary" block>Settings</v-btn></nuxt-link>
+          <v-btn v-if="checkAuth" @click.native="onLogout" color="error" block>Logout</v-btn>
         </div>
       </template>
     </v-navigation-drawer>
