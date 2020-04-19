@@ -20,7 +20,7 @@
   <v-app v-else>
     <v-skeleton-loader
       class="my-auto mx-auto"
-      loading="true"
+      loading=true
       transition-group="fade-transition"
       width="33%"
       type="card-heading, list-item-avatar@2, actions"
@@ -29,10 +29,6 @@
 </template>
 
 <script>
-import Header from '../components/shared/Header.vue'
-import Footer from '../components/shared/Footer.vue'
-import Sidebar from '../components/shared/Sidebar.vue'
-
 export default {
   name: 'KijiReader',
 
@@ -57,9 +53,9 @@ export default {
   },
 
   components: {
-    appHeader: Header,
-    appFooter: Footer,
-    appSidebar: Sidebar,
+    appHeader: () => import('../components/shared/Header.vue'),
+    appFooter: () => import('../components/shared/Footer.vue'),
+    appSidebar: () => import('../components/shared/Sidebar.vue'),
   },
 
   async mounted() {

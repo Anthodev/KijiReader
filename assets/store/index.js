@@ -5,6 +5,8 @@ export const state = () => ({
   user: null,
   serverError: '',
   newsfeed: [],
+  unreadAllCount: 0,
+  unreadFeedList: null,
   loadingState: {
     loading: false,
     type: ''
@@ -47,6 +49,11 @@ export const mutations = {
 
   SET_LOADING_STATE(state, payload) {
     state.loadingState = payload.loadingState
+  },
+
+  SET_UNREAD_COUNT(state, payload) {
+    state.unreadAllCount = payload.unreadCount
+    state.unreadFeedList = payload.unreadList
   }
 }
 
@@ -208,6 +215,33 @@ export const actions = {
     commit("SET_LOADING_STATE", {
       loadingState: loadingState
     })
+  },
+
+  async FETCH_UNREAD_COUNT({
+    commit
+  }) {
+    if (!getters.userToken) return;
+
+    return await this.$axios.$get('/api/feed/get/unreadcount')
+      .then(res => {
+        let unreadCount = 0
+
+        res.forEach(el => {
+          unreadCount += parseInt(el.unreadCount)
+        });
+
+        commit('SET_UNREAD_COUNT', {
+          unreadCount: unreadCount,
+          unreadList: res
+        })
+      })
+      .catch(error => {
+        console.log(error)
+
+        commit("SET_SERVER_ERROR", {
+          error: error.response.status
+        })
+      })
   }
 }
 
@@ -242,5 +276,13 @@ export const getters = {
 
   loadingState(state) {
     return state.loadingState
+  },
+
+  unreadAllCount(state) {
+    return state.unreadAllCount
+  },
+
+  unreadFeedList(state) {
+    return state.unreadFeedList
   }
 }

@@ -7,6 +7,7 @@ use App\Entity\Feed;
 use App\Utils\FeedHandler;
 use App\Repository\FeedRepository;
 use App\Repository\UserStoryRepository;
+use JMS\Serializer\SerializerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializationContext;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,13 +26,15 @@ class FeedController extends AbstractController
     private $feedRepository;
     private $userStoryRepository;
     private $em;
+    private $serializer;
 
-    public function __construct(FeedHandler $feedHandler, FeedRepository $feedRepository, UserStoryRepository $userStoryRepository, EntityManagerInterface $em)
+    public function __construct(FeedHandler $feedHandler, FeedRepository $feedRepository, UserStoryRepository $userStoryRepository, EntityManagerInterface $em, SerializerInterface $serializer)
     {
         $this->feedHandler = $feedHandler;
         $this->feedRepository = $feedRepository;
         $this->userStoryRepository = $userStoryRepository;
         $this->em = $em;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -101,27 +104,28 @@ class FeedController extends AbstractController
     /**
      * @Route("/get/{id}")
      */
-    public function getFeed($id)
-    {
-        $user = $this->getUser();
+    // public function getFeed($id)
+    // {
+    //     $user = $this->getUser();
 
-        try {
-            $feed = $this->feedRepository->find($id);
+    //     try {
+    //         $feed = $this->feedRepository->find($id);
 
-            $this->feedHandler->processFeed($feed, $user);
+    //         $this->feedHandler->processFeed($feed, $user);
 
-            $userStories = $this->userStoryRepository->findBy(['feed' => $feed, 'user' => $user], ['date' => 'DESC']);
+    //         $userStories = $this->userStoryRepository->findBy(['feed' => $feed, 'user' => $user], ['date' => 'DESC']);
             
-            return new JsonResponse($userStories, 200);
-        } catch (Exception $e) {
-            return new JsonResponse(\json_encode($e), 403);
-        }
-    }
+    //         return new JsonResponse($userStories, 200);
+    //     } catch (Exception $e) {
+    //         return new JsonResponse(\json_encode($e), 403);
+    //     }
+    // }
 
     /**
-     * @Route("/get/unreadcount")
+     * @Route("/get/unreadcount", methods={"GET"})
+     * @IsGranted("IS_AUTHENTICATED_FULLY")
      */
-    public function getUnreadFeed()
+    public function getUnreadFeedsCount()
     {
         $user = $this->getUser();
 
@@ -147,7 +151,7 @@ class FeedController extends AbstractController
             $response->setStatusCode(Response::HTTP_OK);
             $response->headers->set('Content-Type', 'application/json');
         } catch (Exception $e) {
-            $response = new JsonResponse(\json_encode($e), 403);
+            $response = new JsonResponse($e, 403);
         }
 
         return $response;

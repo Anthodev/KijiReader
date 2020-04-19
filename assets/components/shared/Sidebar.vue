@@ -1,21 +1,27 @@
 <template>
   <div id="sidebar">
-    <v-navigation-drawer v-model="drawer" width="12.5rem" app clipped>
-      <v-list>
-        <v-list-item link>
+    <v-navigation-drawer v-model="drawer" width="13rem" app clipped>
+      <v-list dense>
+        <v-list-item to="/" link nuxt exact>
           <v-list-item-action>
             <v-icon>mdi-home</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title>All elements</v-list-item-title>
+            <v-list-item-title v-if="unreadAllCount > 0">
+              <v-badge color="red" :content="unreadAllCount" :value="unreadAllCount" offset-x="2" offset-y="10">All elements</v-badge>
+            </v-list-item-title>
+            <v-list-item-title v-else>All elements</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item link>
+        <v-list-item v-for="(unreadFeed, i) in unreadList" :key="i" link>
           <v-list-item-action>
-            <v-icon>mdi-settings</v-icon>
+            <v-icon>mdi-home</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title>Settings</v-list-item-title>
+            <v-list-item-title v-if="unreadFeed.unreadCount > 0">
+              <v-badge color="red" :content="unreadFeed.unreadCount" :value="unreadFeed.unreadCount" offset-x="2" offset-y="10">All elements</v-badge>
+            </v-list-item-title>
+            <v-list-item-title v-else>All elements</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list>
@@ -31,12 +37,18 @@
 </template>
 
 <script>
-import FeedAdd from './FeedAdd'
-
 export default {
   computed: {
     checkAuth() {
       return this.$store.getters.isAuthenticated
+    },
+
+    unreadAllCount() {
+      return this.$store.getters.unreadAllCount
+    },
+
+    unreadList() {
+      return this.$store.getters.unreadFeedList
     },
 
     drawer: {
@@ -56,26 +68,29 @@ export default {
       })
 
       this.$store.dispatch('LOGOUT').catch((e) => {
-        console.log(e)
-
-        $store.dispatch('SET_LOADING_STATE', {
+        this.$store.dispatch('SET_LOADING_STATE', {
           loading: false,
           type: ''
         })
       })
+    },
+
+    startFetchUnreadCount: function() {
+      const self = this
+
+      setInterval(() => {
+        this.$store.dispatch('FETCH_UNREAD_COUNT')
+          .then(() => {
+            if (this.$store.getters.serverError != '') {
+              this.$store.dispatch('DELETE_SERVER_ERROR')
+            }
+          })
+      }, 15000)
     }
   },
 
-  components: {
-    appFeedAdd: FeedAdd
-  },
-
   async mounted() {
-    let self = this
-
-    setInterval(function(){
-      console.log('test interval')
-    }, 15000)
+    this.startFetchUnreadCount()
   }
 }
 </script>

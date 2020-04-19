@@ -53,10 +53,8 @@ class StoryController extends AbstractController
                 $this->em->flush();
                 $this->em->clear();
             }
-
-            // $userStories = $user->getUserStories();
+            
             $userStories = $this->userStoryRepository->findLimitedUserStories($user, $offset);
-            // $userStories = $this->userStoryRepository->findBy(['user' => $user], ['story.date' => 'DESC']);
 
             $serializeUserStories = $this->serializer->serialize($userStories, 'json', SerializationContext::create()->enableMaxDepthChecks());
 
