@@ -39,6 +39,7 @@ export default {
                     .then(() => {
                         if (this.$store.getters.serverError == '') {
                             this.$store.dispatch('DELETE_SERVER_ERROR')
+                            this.$store.dispatch('FETCH_UNREAD_COUNT')
                         } else {
                             this.attachReadMarker = !this.attachReadMarker
                             this.$toast.error('Error marking the news as read.')

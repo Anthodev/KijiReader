@@ -92,13 +92,21 @@ class FeedController extends AbstractController
      */
     public function getFeeds()
     {
-        try {
-            $newsList = $this->feedHandler->getFeeds($this->getUser());
+        $response = null;
 
-            return new JsonResponse($newsList, 200);
+        try {
+            $feedsList = $this->feedHandler->getFeeds($this->getUser());
+
+            $serializeFeedsList = $this->serializer->serialize($feedsList, 'json', SerializationContext::create()->enableMaxDepthChecks());
+
+            $response = new Response($serializeFeedsList);
+            $response->setStatusCode(Response::HTTP_OK);
+            $response->headers->set('Content-Type', 'application/json');
         } catch (Exception $e) {
-            return new JsonResponse(\json_encode($e), 403);
+            $response = new JsonResponse($e, 403);
         }
+
+        return $response;
     }
 
     /**

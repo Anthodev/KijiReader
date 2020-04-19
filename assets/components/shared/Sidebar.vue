@@ -19,17 +19,17 @@
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title v-if="unreadFeed.unreadCount > 0">
-              <v-badge color="red" :content="unreadFeed.unreadCount" :value="unreadFeed.unreadCount" offset-x="2" offset-y="10">All elements</v-badge>
+              <v-badge color="red" :content="unreadFeed.unreadCount" :value="unreadFeed.unreadCount" inline>{{ getFeedName(unreadFeed.id) }}</v-badge>
             </v-list-item-title>
-            <v-list-item-title v-else>All elements</v-list-item-title>
+            <v-list-item-title v-else>{{ getFeedName(unreadFeed.id) }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list>
 
       <template v-slot:append>
         <div class="pa-2">
-          <nuxt-link to="/settings"><v-btn v-if="checkAuth" class="mb-2" color="primary" block>Settings</v-btn></nuxt-link>
-          <v-btn v-if="checkAuth" @click.native="onLogout" color="error" block>Logout</v-btn>
+          <nuxt-link to="/settings"><v-btn v-if="checkAuth" class="mb-2" color="primary" block><v-icon left>mdi-settings</v-icon> Settings</v-btn></nuxt-link>
+          <v-btn v-if="checkAuth" @click.native="onLogout" color="error" block><v-icon left>mdi-exit-to-app</v-icon>Logout</v-btn>
         </div>
       </template>
     </v-navigation-drawer>
@@ -51,6 +51,10 @@ export default {
       return this.$store.getters.unreadFeedList
     },
 
+    feeds() {
+      return this.$store.getters.feeds
+    },
+
     drawer: {
       get () {
         return this.$store.getters.drawer
@@ -61,6 +65,18 @@ export default {
   },
 
   methods: {
+    getFeedName: function(feedId){
+      let feedName = ''
+
+      this.feeds.forEach(el => {
+        if (feedId == el.id && feedName == '') {
+          feedName = el.name
+        }
+      });
+
+      return feedName
+    },
+
     onLogout() {
       this.$store.dispatch('SET_LOADING_STATE', {
         loading: true,
@@ -85,7 +101,7 @@ export default {
               this.$store.dispatch('DELETE_SERVER_ERROR')
             }
           })
-      }, 15000)
+      }, 300000)
     }
   },
 
