@@ -72,6 +72,11 @@ class FeedController extends AbstractController
             $feed->setName($result->getFeed()->getTitle());
             $feed->setRssLink($feedUrl);
             $feed->setWebsite($result->getFeed()->getLink());
+
+            $feedLogo = '';
+            if (!is_null($result->getFeed()->getLogo())) $feed->setLogo($result->getFeed()->getLogo());
+            else $feed->setLogo($feedLogo);
+
             $feed->addUser($user);
             $user->addFeed($feed);
 
