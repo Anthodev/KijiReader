@@ -55,6 +55,11 @@ class Feed
      */
     private $updatedAt;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $logo;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -179,6 +184,18 @@ class Feed
     public function setUpdatedAt(\DateTimeInterface $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getLogo(): ?string
+    {
+        return $this->logo;
+    }
+
+    public function setLogo(string $logo): self
+    {
+        $this->logo = $logo;
 
         return $this;
     }
