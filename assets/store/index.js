@@ -185,6 +185,7 @@ export const actions = {
         console.log(res)
 
         dispatch('DELETE_SERVER_ERROR')
+        dispatch('FETCH_UNREAD_COUNT')
         dispatch('FETCH_NEWSFEED')
       })
       .catch(error => {
