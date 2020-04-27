@@ -19,6 +19,19 @@ class UserStoryRepository extends ServiceEntityRepository
         parent::__construct($registry, UserStory::class);
     }
 
+    public function findLimitedUserStories($user, $offset = 0)
+    {
+        return $this->createQueryBuilder('u')
+            ->join('u.story', 's')
+            ->andWhere('u.user = :user')
+            ->setParameter('user', $user)
+            ->orderBy('s.date', 'DESC')
+            ->setFirstResult($offset)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     public function countUnreadUserstoriesByFeed($user)
     {
         return $this->createQueryBuilder('u')

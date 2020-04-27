@@ -1,8 +1,8 @@
 <template>
     <v-expansion-panel class="mx-auto newsCard mb-1" outlined>
         <v-expansion-panel-header :class="{ 'newsReadMarker': !attachReadMarker }" @click="showContent">
-            <v-chip class="col-1 ma-n3" color="indigo"  small pill label>{{ news.feed.name }}</v-chip>
-            <span class="col-9">{{ news.story.title }}</span>
+            <v-chip class="col-1 ma-n3" color="indigo" small pill label><span class="d-inline-block text-truncate" style="max-width: 4rem">{{ news.feed.name }}</span></v-chip>
+            <span class="col-9 ml-3">{{ news.story.title }}</span>
             <span class="text-right">{{ dateAgo }} ago</span>
         </v-expansion-panel-header>
         <v-expansion-panel-content class="newsDesc">
@@ -58,7 +58,7 @@ export default {
 }
 
 .newsReadMarker {
-    border-left: 0.5em solid darkred;
+    box-shadow: -5px 0px 0px 0px darkred;
 }
 
 .newsDesc {

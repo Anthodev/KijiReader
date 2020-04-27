@@ -88,7 +88,6 @@ export const actions = {
   },
 
   async SIGNUP({
-    commit,
     dispatch
   }, authData) {
     return await this.$axios.$post('/api/user/new', {
@@ -106,7 +105,6 @@ export const actions = {
 
   async LOGIN({
     commit,
-    getters
   }, authData) {
     const data = await this.$axios.$post('/api/auth/login_check', {
       username: authData.username,
@@ -150,7 +148,8 @@ export const actions = {
 
   async FETCH_NEWSFEED({
     commit,
-    getters
+    getters,
+    dispatch
   }, offset = 0) {
     if (!getters.userToken) return
 
@@ -166,7 +165,9 @@ export const actions = {
           })
         }
         
-        dispatch('FETCH_UNREAD_COUNT')
+        if (res.length > 0) {
+          dispatch('FETCH_UNREAD_COUNT')
+        }
       })
       .catch(error => console.log(error))
 
@@ -187,6 +188,7 @@ export const actions = {
         console.log(res)
 
         dispatch('DELETE_SERVER_ERROR')
+        dispatch('FETCH_FEEDS')
         dispatch('FETCH_NEWSFEED')
       })
       .catch(error => {
@@ -200,14 +202,16 @@ export const actions = {
 
   async SET_MARK_AS_READ({
     commit,
-    getters
+    getters,
+    dispatch
   }, id) {
     if (!getters.userToken) return;
 
     return await this.$axios.$post("/api/story/markread/" + id)
       .then(res => {
-        console.log(res);
+        console.log(res)
         dispatch('DELETE_SERVER_ERROR')
+        dispatch('FETCH_UNREAD_COUNT')
       })
       .catch(error => {
         console.log(error);
@@ -227,7 +231,8 @@ export const actions = {
   },
 
   async FETCH_UNREAD_COUNT({
-    commit
+    commit,
+    dispatch
   }) {
     if (!getters.userToken) return;
 
@@ -252,16 +257,19 @@ export const actions = {
   },
 
   async FETCH_FEEDS({
-    commit
+    commit,
+    dispatch
   }) {
     if (!getters.userToken) return;
 
     return await this.$axios.$get('/api/feed/get')
       .then(res => {
         dispatch('DELETE_SERVER_ERROR')
-        commit('SET_FEEDS', {
-          feeds: res
-        })
+        if (res.length > 0) {
+          commit('SET_FEEDS', {
+            feeds: res
+          })
+        }
       })
       .catch(error => {
         console.log(error)
