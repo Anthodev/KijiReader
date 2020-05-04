@@ -100,11 +100,11 @@ class FeedController extends AbstractController
         $response = null;
 
         try {
-            $feedsList = $this->feedHandler->getFeeds($this->getUser());
+            $feedsList = $this->getUser()->getFeeds();
 
-            $serializeFeedsList = $this->serializer->serialize($feedsList, 'json', SerializationContext::create()->enableMaxDepthChecks());
+            $serializedFeedsList = $this->serializer->serialize($feedsList, 'json');
 
-            $response = new Response($serializeFeedsList);
+            $response = new Response($serializedFeedsList);
             $response->setStatusCode(Response::HTTP_OK);
             $response->headers->set('Content-Type', 'application/json');
         } catch (Exception $e) {

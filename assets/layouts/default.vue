@@ -57,7 +57,7 @@ export default {
   components: {
     appHeader: () => import('../components/shared/Header.vue'),
     appFooter: () => import('../components/shared/Footer.vue'),
-    appSidebar: () => import('../components/shared/Sidebar.vue'),
+    appSidebar: () => import('../components/shared/sidebar/Sidebar.vue'),
   },
 
   async mounted() {

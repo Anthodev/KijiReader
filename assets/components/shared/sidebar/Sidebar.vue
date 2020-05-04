@@ -13,17 +13,7 @@
             <v-list-item-title v-else>All elements</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item v-for="(unreadFeed, i) in unreadList" :key="i" link>
-          <v-list-item-action>
-            <v-img :src="unreadFeed.logo" alt="feed logo" contain />
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title v-if="unreadFeed.unreadCount > 0">
-              <v-badge color="red" :content="unreadFeed.unreadCount" :value="unreadFeed.unreadCount" inline><span class="d-inline-block text-truncate" style="max-width: 5.5rem">{{ getFeedName(unreadFeed.id) }}</span></v-badge>
-            </v-list-item-title>
-            <v-list-item-title v-else>{{ getFeedName(unreadFeed.id) }}</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
+        <app-feed-item v-for="(feedItem, i) in unreadList" :key="i" :feed="feedItem" :unreadCount="getUnreadCount(feedItem.id)" />
       </v-list>
 
       <template v-slot:append>
@@ -65,16 +55,16 @@ export default {
   },
 
   methods: {
-    getFeedName: function(feedId){
-      let feedName = ''
+    getUnreadCount: function(feedId) {
+      let unreadCount = 0
 
-      this.feeds.forEach(el => {
-        if (feedId == el.id && feedName == '') {
-          feedName = el.name
+      this.unreadList.forEach(el => {
+        if (feedId == el.id && unreadCount == 0) {
+          unreadCount = el.name
         }
       });
 
-      return feedName
+      return unreadCount
     },
 
     onLogout() {
@@ -103,6 +93,10 @@ export default {
           })
       }, 300000)
     }
+  },
+
+  components: {
+    appFeedItem: () => import('./FeedItem')
   },
 
   async mounted() {

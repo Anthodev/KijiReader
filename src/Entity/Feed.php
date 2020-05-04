@@ -4,11 +4,13 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
+use JMS\Serializer\Annotation as Serializer;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\FeedRepository")
  * @ORM\HasLifecycleCallbacks()
+ * @Serializer\ExclusionPolicy("all")
  */
 class Feed
 {
@@ -16,21 +18,25 @@ class Feed
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Serializer\Expose
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Serializer\Expose
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Serializer\Expose
      */
     private $website;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Serializer\Expose
      */
     private $rssLink;
 
@@ -40,7 +46,7 @@ class Feed
     private $users;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Story", mappedBy="feed", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\Story", mappedBy="feed", orphanRemoval=true, fetch="LAZY")
      * @ORM\OrderBy({"date" = "DESC"})
      */
     private $stories;
@@ -57,6 +63,7 @@ class Feed
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Serializer\Expose
      */
     private $logo;
 

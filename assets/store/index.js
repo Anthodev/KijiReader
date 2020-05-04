@@ -265,6 +265,7 @@ export const actions = {
     return await this.$axios.$get('/api/feed/get')
       .then(res => {
         dispatch('DELETE_SERVER_ERROR')
+
         if (res.length > 0) {
           commit('SET_FEEDS', {
             feeds: res
