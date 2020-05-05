@@ -13,7 +13,7 @@
             <v-list-item-title v-else>All elements</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <app-feed-item v-for="(feedItem, i) in unreadList" :key="i" :feed="feedItem" :unreadCount="getUnreadCount(feedItem.id)" />
+        <app-feed-item v-for="(feedItem, i) in unreadList" :key="i" :feed="feedItem" />
       </v-list>
 
       <template v-slot:append>
@@ -41,10 +41,6 @@ export default {
       return this.$store.getters.unreadFeedList
     },
 
-    feeds() {
-      return this.$store.getters.feeds
-    },
-
     drawer: {
       get () {
         return this.$store.getters.drawer
@@ -55,18 +51,6 @@ export default {
   },
 
   methods: {
-    getUnreadCount: function(feedId) {
-      let unreadCount = 0
-
-      this.unreadList.forEach(el => {
-        if (feedId == el.id && unreadCount == 0) {
-          unreadCount = el.name
-        }
-      });
-
-      return unreadCount
-    },
-
     onLogout() {
       this.$store.dispatch('SET_LOADING_STATE', {
         loading: true,

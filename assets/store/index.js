@@ -41,6 +41,7 @@ export const mutations = {
   },
 
   SET_NEWSFEED(state, payload) {
+    state.newsfeed = []
     state.newsfeed = payload.newsfeed
   },
 
