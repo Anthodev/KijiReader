@@ -5,6 +5,9 @@ export const state = () => ({
   user: null,
   serverError: '',
   newsfeed: [],
+  feeds: [],
+  unreadAllCount: 0,
+  unreadFeedList: [],
   loadingState: {
     loading: false,
     type: ''
@@ -38,6 +41,7 @@ export const mutations = {
   },
 
   SET_NEWSFEED(state, payload) {
+    state.newsfeed = []
     state.newsfeed = payload.newsfeed
   },
 
@@ -47,6 +51,15 @@ export const mutations = {
 
   SET_LOADING_STATE(state, payload) {
     state.loadingState = payload.loadingState
+  },
+
+  SET_UNREAD_COUNT(state, payload) {
+    state.unreadAllCount = payload.unreadCount
+    state.unreadFeedList = payload.unreadList
+  },
+
+  SET_FEEDS(state, payload) {
+    state.feeds = payload.feeds
   }
 }
 
@@ -76,7 +89,6 @@ export const actions = {
   },
 
   async SIGNUP({
-    commit,
     dispatch
   }, authData) {
     return await this.$axios.$post('/api/user/new', {
@@ -94,7 +106,6 @@ export const actions = {
 
   async LOGIN({
     commit,
-    getters
   }, authData) {
     const data = await this.$axios.$post('/api/auth/login_check', {
       username: authData.username,
@@ -138,7 +149,8 @@ export const actions = {
 
   async FETCH_NEWSFEED({
     commit,
-    getters
+    getters,
+    dispatch
   }, offset = 0) {
     if (!getters.userToken) return
 
@@ -152,6 +164,10 @@ export const actions = {
           commit("SET_MORE_NEWSFEED", {
             newsfeed: res
           })
+        }
+        
+        if (res.length > 0) {
+          dispatch('FETCH_UNREAD_COUNT')
         }
       })
       .catch(error => console.log(error))
@@ -172,6 +188,8 @@ export const actions = {
       .then(res => {
         console.log(res)
 
+        dispatch('DELETE_SERVER_ERROR')
+        dispatch('FETCH_FEEDS')
         dispatch('FETCH_NEWSFEED')
       })
       .catch(error => {
@@ -185,13 +203,16 @@ export const actions = {
 
   async SET_MARK_AS_READ({
     commit,
-    getters
+    getters,
+    dispatch
   }, id) {
     if (!getters.userToken) return;
 
     return await this.$axios.$post("/api/story/markread/" + id)
       .then(res => {
-        console.log(res);
+        console.log(res)
+        dispatch('DELETE_SERVER_ERROR')
+        dispatch('FETCH_UNREAD_COUNT')
       })
       .catch(error => {
         console.log(error);
@@ -208,6 +229,53 @@ export const actions = {
     commit("SET_LOADING_STATE", {
       loadingState: loadingState
     })
+  },
+
+  async FETCH_UNREAD_COUNT({
+    commit,
+    dispatch
+  }) {
+    if (!getters.userToken) return;
+
+    return await this.$axios.$get('/api/feed/get/unreadcount')
+      .then(res => {
+        dispatch('DELETE_SERVER_ERROR')
+
+        let unreadCount = 0
+
+        res.forEach(el => {
+          unreadCount += parseInt(el.unreadCount)
+        });
+
+        commit('SET_UNREAD_COUNT', {
+          unreadCount: unreadCount,
+          unreadList: res
+        })
+      })
+      .catch(error => {
+        console.log(error)
+      })
+  },
+
+  async FETCH_FEEDS({
+    commit,
+    dispatch
+  }) {
+    if (!getters.userToken) return;
+
+    return await this.$axios.$get('/api/feed/get')
+      .then(res => {
+        dispatch('DELETE_SERVER_ERROR')
+
+        if (res.length > 0) {
+          commit('SET_FEEDS', {
+            feeds: res
+          })
+        }
+      })
+      .catch(error => {
+        console.log(error)
+      })
   }
 }
 
@@ -242,5 +310,17 @@ export const getters = {
 
   loadingState(state) {
     return state.loadingState
+  },
+
+  unreadAllCount(state) {
+    return state.unreadAllCount
+  },
+
+  unreadFeedList(state) {
+    return state.unreadFeedList
+  },
+
+  feeds(state) {
+    return state.feeds
   }
 }

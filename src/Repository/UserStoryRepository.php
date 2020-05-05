@@ -32,6 +32,20 @@ class UserStoryRepository extends ServiceEntityRepository
         ;
     }
 
+    public function countUnreadUserstoriesByFeed($user)
+    {
+        return $this->createQueryBuilder('u')
+            ->select('COUNT(u.id) AS unreadCount', 'f.id', 'f.name')
+            ->join('u.feed', 'f')
+            ->groupBy('u.feed')
+            ->where('u.user = :user')
+            ->andWhere('u.readStatus = false')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     // /**
     //  * @return UserStory[] Returns an array of UserStory objects
     //  */

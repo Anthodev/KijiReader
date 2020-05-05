@@ -7,8 +7,11 @@ use App\Entity\Feed;
 use App\Utils\FeedHandler;
 use App\Repository\FeedRepository;
 use App\Repository\UserStoryRepository;
+use JMS\Serializer\SerializerInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use JMS\Serializer\SerializationContext;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -23,13 +26,15 @@ class FeedController extends AbstractController
     private $feedRepository;
     private $userStoryRepository;
     private $em;
+    private $serializer;
 
-    public function __construct(FeedHandler $feedHandler, FeedRepository $feedRepository, UserStoryRepository $userStoryRepository, EntityManagerInterface $em)
+    public function __construct(FeedHandler $feedHandler, FeedRepository $feedRepository, UserStoryRepository $userStoryRepository, EntityManagerInterface $em, SerializerInterface $serializer)
     {
         $this->feedHandler = $feedHandler;
         $this->feedRepository = $feedRepository;
         $this->userStoryRepository = $userStoryRepository;
         $this->em = $em;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -67,6 +72,11 @@ class FeedController extends AbstractController
             $feed->setName($result->getFeed()->getTitle());
             $feed->setRssLink($feedUrl);
             $feed->setWebsite($result->getFeed()->getLink());
+
+            $feedLogo = '';
+            if (!is_null($result->getFeed()->getLogo())) $feed->setLogo($result->getFeed()->getLogo());
+            else $feed->setLogo($feedLogo);
+
             $feed->addUser($user);
             $user->addFeed($feed);
 
@@ -87,32 +97,76 @@ class FeedController extends AbstractController
      */
     public function getFeeds()
     {
-        try {
-            $newsList = $this->feedHandler->getFeeds($this->getUser());
+        $response = null;
 
-            return new JsonResponse($newsList, 200);
+        try {
+            $feedsList = $this->getUser()->getFeeds();
+
+            $serializedFeedsList = $this->serializer->serialize($feedsList, 'json');
+
+            $response = new Response($serializedFeedsList);
+            $response->setStatusCode(Response::HTTP_OK);
+            $response->headers->set('Content-Type', 'application/json');
         } catch (Exception $e) {
-            return new JsonResponse(\json_encode($e), 403);
+            $response = new JsonResponse($e, 403);
         }
+
+        return $response;
     }
 
     /**
      * @Route("/get/{id}")
      */
-    public function getFeed($id)
+    // public function getFeed($id)
+    // {
+    //     $user = $this->getUser();
+
+    //     try {
+    //         $feed = $this->feedRepository->find($id);
+
+    //         $this->feedHandler->processFeed($feed, $user);
+
+    //         $userStories = $this->userStoryRepository->findBy(['feed' => $feed, 'user' => $user], ['date' => 'DESC']);
+            
+    //         return new JsonResponse($userStories, 200);
+    //     } catch (Exception $e) {
+    //         return new JsonResponse(\json_encode($e), 403);
+    //     }
+    // }
+
+    /**
+     * @Route("/get/unreadcount", methods={"GET"})
+     * @IsGranted("IS_AUTHENTICATED_FULLY")
+     */
+    public function getUnreadFeedsCount()
     {
         $user = $this->getUser();
 
+        $response = null;
+
         try {
-            $feed = $this->feedRepository->find($id);
+            $feeds = $user->getFeeds();
 
-            $this->feedHandler->processFeed($feed, $user);
+            if ($feeds->count() > 0) {
+                foreach ($feeds as $feed) {
+                    $this->feedHandler->processFeed($feed, $user);
+                }
 
-            $userStories = $this->userStoryRepository->findBy(['feed' => $feed, 'user' => $user], ['date' => 'DESC']);
-            
-            return new JsonResponse($userStories, 200);
+                $this->em->flush();
+                $this->em->clear();
+            }
+
+            $unreadFeeds = $this->userStoryRepository->countUnreadUserstoriesByFeed($user);
+
+            $serializeUnreadFeeds = $this->serializer->serialize($unreadFeeds, 'json', SerializationContext::create()->enableMaxDepthChecks());
+
+            $response = new Response($serializeUnreadFeeds);
+            $response->setStatusCode(Response::HTTP_OK);
+            $response->headers->set('Content-Type', 'application/json');
         } catch (Exception $e) {
-            return new JsonResponse(\json_encode($e), 403);
+            $response = new JsonResponse($e, 403);
         }
+
+        return $response;
     }
 }

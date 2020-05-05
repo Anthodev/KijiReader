@@ -2,25 +2,27 @@
   <v-app id="app" v-if="auth">
     <v-skeleton-loader
       class="my-auto mx-auto"
-      :loading="loadingState.loading"
+      :loading=loadingState.loading
       transition-group="fade-transition"
       width="33%"
-      :type="loadingState.type"
+      :type=loadingState.type
     >
-      <v-content id="content">
-        <app-header />
-        <v-container class="fill-height ml-8" fluid>
-          <app-sidebar />
-          <Nuxt />
+      <v-content>
+        <v-container id="content">
+            <app-header />
+            <app-sidebar />
+            <v-row class="col-12 ml-8" fluid>
+              <Nuxt />
+            </v-row>
+            <app-footer />
         </v-container>
-        <app-footer />
       </v-content>
     </v-skeleton-loader>
   </v-app>
   <v-app v-else>
     <v-skeleton-loader
       class="my-auto mx-auto"
-      loading="true"
+      loading=true
       transition-group="fade-transition"
       width="33%"
       type="card-heading, list-item-avatar@2, actions"
@@ -29,10 +31,6 @@
 </template>
 
 <script>
-import Header from '../components/shared/Header.vue'
-import Footer from '../components/shared/Footer.vue'
-import Sidebar from '../components/shared/Sidebar.vue'
-
 export default {
   name: 'KijiReader',
 
@@ -57,9 +55,9 @@ export default {
   },
 
   components: {
-    appHeader: Header,
-    appFooter: Footer,
-    appSidebar: Sidebar,
+    appHeader: () => import('../components/shared/Header.vue'),
+    appFooter: () => import('../components/shared/Footer.vue'),
+    appSidebar: () => import('../components/shared/sidebar/Sidebar.vue'),
   },
 
   async mounted() {
@@ -76,5 +74,6 @@ export default {
 <style lang="stylus" scoped>
 #content {
   padding-right: 64px !important;
+  width: 100%;
 }
 </style>

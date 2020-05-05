@@ -1,7 +1,10 @@
 <template>
-  <v-row>
+  <v-row v-if="newsfeed.length > 0">
     <app-feed-bar />
     <app-feed-list />
+  </v-row>
+  <v-row v-else>
+    <app-feed-add />
   </v-row>
 </template>
 
@@ -9,9 +12,16 @@
 export default {
   layout: 'default',
 
+  computed: {
+    newsfeed() {
+      return this.$store.getters.newsfeed
+    }
+  },
+
   components: {
     appFeedBar: () => import('../components/feed/FeedBar'),
     appFeedList: () => import('../components/feed/FeedList'),
+    appFeedAdd: () => import('../components/shared/FeedAdd'),
   },
 
   async mounted() {
@@ -21,6 +31,9 @@ export default {
         type: ""
       })
     })
+
+    this.$store.dispatch('FETCH_UNREAD_COUNT')
+    this.$store.dispatch('FETCH_FEEDS')
   }
 }
 </script>
