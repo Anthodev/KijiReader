@@ -1,7 +1,13 @@
 <template>
   <v-list-item link>
     <v-list-item-action>
-      <v-img :src="feed.logo" :lazy-src="feed.logo" alt="feed logo" contain />
+      <template v-if="feedIcon != ''">
+        <v-img :src="feedIcon" alt="feed logo" class="feedLogo" contain />
+      </template>
+      <template v-else>
+        <v-icon>mdi-rss-box</v-icon>
+      </template>
+      <!-- <v-img :src="feedIcon" alt="feed logo" contain /> -->
     </v-list-item-action>
     <v-list-item-content>
       <v-list-item-title v-if="feed.unreadCount > 0">
@@ -22,9 +28,16 @@ export default {
     },
 
     feedIcon() {
-      if (feed.logo == '') return false
-      else return true
+      if (this.feed.logo == '') return ''
+      else return this.feed.logo
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.feedLogo {
+  max-width: 2em;
+  max-height: 1em;
+}
+</style>

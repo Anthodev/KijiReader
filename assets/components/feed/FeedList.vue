@@ -12,9 +12,7 @@ export default {
   data() {
     return {
       offset: 0,
-      limit: 50,
       items: [],
-      busy: false
     }
   },
 
