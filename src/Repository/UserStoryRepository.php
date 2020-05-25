@@ -27,6 +27,7 @@ class UserStoryRepository extends ServiceEntityRepository
             ->setParameter('user', $user)
             ->orderBy('s.date', 'DESC')
             ->setFirstResult($offset)
+            ->setMaxResults(50)
             ->getQuery()
             ->getResult()
         ;

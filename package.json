@@ -23,6 +23,7 @@
         "nuxt": "^2.11.0",
         "stylus": "^0.54.7",
         "stylus-loader": "^3.0.2",
+        "vue-infinite-loading": "^2.4.5",
         "vuelidate": "^0.7.5"
     },
     "devDependencies": {

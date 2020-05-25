@@ -42,7 +42,7 @@ export const mutations = {
 
   SET_NEWSFEED(state, payload) {
     state.newsfeed = []
-    state.newsfeed = payload.newsfeed
+    Array.prototype.push.apply(state.newsfeed, payload.newsfeed)
   },
 
   SET_MORE_NEWSFEED(state, payload) {
@@ -160,14 +160,18 @@ export const actions = {
           commit("SET_NEWSFEED", {
             newsfeed: res
           })
+
+          if (res.length > 0) {
+            dispatch("FETCH_UNREAD_COUNT");
+          }
+
+          return res
         } else {
           commit("SET_MORE_NEWSFEED", {
             newsfeed: res
           })
-        }
-        
-        if (res.length > 0) {
-          dispatch('FETCH_UNREAD_COUNT')
+
+          return res
         }
       })
       .catch(error => console.log(error))
