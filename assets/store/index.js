@@ -280,6 +280,22 @@ export const actions = {
       .catch(error => {
         console.log(error)
       })
+  },
+
+  async DELETE_FEED({
+    dispatch
+  }, id) {
+    if (!getters.userToken) return
+
+    return await this.$axios.$post('/api/feed/delete/' + id)
+      .then(res => {
+        dispatch('FETCH_NEWFEED')
+        dispatch('FETCH_FEEDS')
+        dispatch('FETCH_UNREAD_COUNT')
+      })
+      .catch(error => {
+        console.log(error)
+      })
   }
 }
 

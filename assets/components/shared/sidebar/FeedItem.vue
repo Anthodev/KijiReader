@@ -1,5 +1,4 @@
 <template>
-  <!-- <v-list-item @mouseover="hover = true; hoverState = true" @mouseleave="hover = false; hoverOff()" link> -->
   <v-list-item link>
 
     <v-menu open-on-hover offset-x>
@@ -28,12 +27,25 @@
           <v-icon>mdi-eye</v-icon>
         </v-btn>
 
-        <v-btn icon>
+        <v-btn @click="deleteFeed" icon>
           <v-icon>mdi-trash-can</v-icon>
         </v-btn>
       </v-toolbar>
 
     </v-menu>
+
+    <v-overlay :value="showOverlay">
+      <v-card>
+        <v-card-title class="headline">Delete the feed?</v-card-title>
+        <v-card-text>Are you sure to delete this feed: {{ feed.name }}</v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn color="error" @click="showOverlay = false">CANCEL</v-btn>
+          <v-btn color="success" @click="deleteFeed">CONFIRM</v-btn>
+          <v-spacer />
+        </v-card-actions>
+      </v-card>
+    </v-overlay>
 
   </v-list-item>
 </template>
@@ -41,6 +53,12 @@
 <script>
 export default {
   props: ['feed', 'unreadCount'],
+
+  data() {
+    return {
+      showOverlay: false
+    }
+  },
 
   computed: {
     feeds() {
@@ -50,6 +68,12 @@ export default {
     feedIcon() {
       if (this.feed.logo == '') return ''
       else return this.feed.logo
+    }
+  },
+
+  methods: {
+    deleteFeed() {
+      this.showOverlay = !this.showOverlay
     }
   }
 }
