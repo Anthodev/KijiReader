@@ -93,6 +93,37 @@ class FeedController extends AbstractController
     }
 
     /**
+     * @Route("/delete/{id}", methods={"POST"})
+     * @IsGranted("IS_AUTHENTICATED_FULLY")
+     */
+    public function deleteFeed($id)
+    {
+        $user = $this->getUser();
+
+        try {
+            $feed = $this->feedRepository->find($id);
+
+            if ($feed->getUsers()->contains($user)) {
+                $feedUserStories = $this->userStoryRepository->findBy(['feed' => $feed, 'user' => $user]);
+
+                foreach ($feedUserStories as $userStory) {
+                    $user->removeUserStory($userStory);
+                    $this->em->remove($userStory);
+                }
+
+                $feed->removeUser($user);
+                $user->removeFeed($feed);
+
+                $this->em->flush();
+
+                return new JsonResponse('success', 200);
+            }
+        } catch (Exception $e) {
+            return new JsonResponse($e, 500);
+        }
+    }
+
+    /**
      * @Route("/get")
      */
     public function getFeeds()

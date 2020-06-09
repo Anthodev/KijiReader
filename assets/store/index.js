@@ -289,7 +289,7 @@ export const actions = {
 
     return await this.$axios.$post('/api/feed/delete/' + id)
       .then(res => {
-        dispatch('FETCH_NEWFEED')
+        dispatch('FETCH_NEWSFEED')
         dispatch('FETCH_FEEDS')
         dispatch('FETCH_UNREAD_COUNT')
       })

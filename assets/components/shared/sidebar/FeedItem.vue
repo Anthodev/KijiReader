@@ -27,7 +27,7 @@
           <v-icon>mdi-eye</v-icon>
         </v-btn>
 
-        <v-btn @click="deleteFeed" icon>
+        <v-btn @click="showOverlay = !showOverlay" icon>
           <v-icon>mdi-trash-can</v-icon>
         </v-btn>
       </v-toolbar>
@@ -73,6 +73,7 @@ export default {
 
   methods: {
     deleteFeed() {
+      this.$store.dispatch('DELETE_FEED', this.feed.id)
       this.showOverlay = !this.showOverlay
     }
   }
