@@ -1,28 +1,49 @@
 <template>
-    <v-responsive class="overflow-y-auto" min-height="300">
-        <v-expansion-panels popout focusable>
-            <app-feed-news v-for="(news, i) in newsfeed" :key="i" :news="news" />
-        </v-expansion-panels>
-    </v-responsive>
+    <div>
+      <app-news-card v-for="(news, $index) in items" :key="$index" :news="news" />
+      <infinite-loading v-if="items.length" spinner="spiral" @infinite="loadMoreNews" />
+    </div>
 </template>
 
 <script>
+import InfiniteLoading from 'vue-infinite-loading'
+
 export default {
-    data() {
-        return {
-            totalNewsfeed: 0,
-            offset: 0,
-        }
-    },
-
-    computed: {
-        newsfeed () {
-            return this.$store.getters.newsfeed
-        }
-    },
-
-    components: {
-        appFeedNews: () => import('./FeedNews')
+  data() {
+    return {
+      offset: 0,
+      items: [],
     }
+  },
+
+  computed: {
+    newsfeed () {
+      return this.$store.getters.newsfeed
+    }
+  },
+
+  methods: {
+    async loadMoreNews($state) {      
+      const result = await this.$store.dispatch('FETCH_NEWSFEED', this.offset)
+
+      if (result.length > 1) {
+        result.forEach((item) => this.items.push(item))
+        this.offset += result.length
+        $state.loaded()
+      } else $state.complete()
+    },
+  },
+
+  components: {
+    appNewsCard: () => import('./NewsCard'),
+    InfiniteLoading
+  },
+
+  async fetch() {
+    const result = await this.$store.dispatch('FETCH_NEWSFEED', this.offset)
+
+    this.offset = result.length
+    this.items = result
+  },
 }
 </script>

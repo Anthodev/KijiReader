@@ -1,16 +1,27 @@
 <template>
-  <v-expansion-panel class="mx-auto newsCard mb-1" outlined>
-    <v-expansion-panel-header :class="{ 'newsReadMarker': !attachReadMarker }" @click="showContent">
-      <v-chip class="col-1 ma-n3 flex-grow-1" color="indigo" small pill label><span class="d-inline-block text-truncate" style="max-width: 4rem">{{ news.feed.name }}</span></v-chip>
-      <span class="col-9 ml-3">{{ news.story.title }}</span>
-      <span class="text-right">{{ dateAgo }} ago</span>
-    </v-expansion-panel-header>
-    <v-expansion-panel-content class="newsDesc">
-      <a :href="news.story.url" target="_blank" rel="noopener noreferrer"><p class="title">{{ news.story.title }}</p></a>
+  <v-card class="mb-1" :class="{ 'newsReadMarker': !attachReadMarker }">
+    <v-card-subtitle class="col-12 d-inline-flex align-center" style="cursor: pointer" @click="showContent">
+      <div class="col-1">
+        <v-chip color="indigo" small pill label><span class="d-inline-block text-truncate">{{ news.feed.name }}</span></v-chip>
+      </div>
+      <div class="flex-grow-1">
+        <span class="col-12 ml-3">{{ news.story.title }}</span>
+      </div>
+      <div>
+        <span class="text-right align-self-end">{{ dateAgo }} ago</span>
+        <v-btn icon><v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon></v-btn>
+      </div>
+    </v-card-subtitle>
+    <v-expand-transition>
+      <div v-show="show">
+        <v-divider class="my-n2"/>
 
-      <p class="body-2 story-content" v-html="news.story.content"></p>
-    </v-expansion-panel-content>
-  </v-expansion-panel>
+        <v-card-text><a class="title" :href="news.story.url" target="_blank" rel="noopener noreferrer">{{ news.story.title }}</a></v-card-text>
+
+        <v-card-text v-html="news.story.content"/>
+      </div>
+    </v-expand-transition>
+  </v-card>
 </template>
 
 <script>
@@ -21,6 +32,7 @@ export default {
 
   data() {
     return {
+      show: false,
       attachReadMarker: this.news.read_status,
     }
   },
@@ -33,6 +45,8 @@ export default {
 
   methods: {
     showContent() {
+      this.show = !this.show
+
       if (!this.attachReadMarker) {
         this.attachReadMarker = !this.attachReadMarker
         this.$store.dispatch('SET_MARK_AS_READ', this.news.id)
@@ -53,19 +67,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-::v-deep .v-chip__content {
-  text-overflow: ellipsis;
-}
-
 .newsReadMarker {
   box-shadow: -5px 0px 0px 0px darkred;
-}
-
-.newsDesc {
-  margin-top: 0.25rem;
-}
-
-.story-content {
-  white-space: pre-line;
 }
 </style>

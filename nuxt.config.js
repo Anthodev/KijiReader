@@ -37,7 +37,8 @@ export default {
   plugins: [
     { src: '~/plugins/vuelidate', mode: 'client', ssr: false },
     { src: '~/plugins/vuetify' },
-    { src: '~/plugins/axios' }
+    { src: '~/plugins/axios' },
+    { src: '~/plugins/vue-infinite-loading', ssr: false }
   ],
   /*
   ** Nuxt.js dev-modules

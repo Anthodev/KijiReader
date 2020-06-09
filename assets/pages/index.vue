@@ -1,7 +1,7 @@
 <template>
   <v-row v-if="newsfeed.length > 0">
-    <app-feed-bar />
-    <app-feed-list />
+    <app-feed-bar class="col-12 ml-n1 mb-n2" />
+    <app-feed-list class="col-12" />
   </v-row>
   <v-row v-else>
     <app-feed-add />
@@ -32,7 +32,7 @@ export default {
       })
     })
 
-    this.$store.dispatch('FETCH_UNREAD_COUNT')
+    // this.$store.dispatch('FETCH_UNREAD_COUNT')
     this.$store.dispatch('FETCH_FEEDS')
   }
 }
