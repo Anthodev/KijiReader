@@ -86,9 +86,16 @@ class FeedController extends AbstractController
 
             return new JsonResponse($feed, 200);
         } else {
-            return new JsonResponse([
-                'message' => 'Feed already registered'
-            , 403]);
+            if (!$feed->getUsers()->contains($user)) {
+                $feed->addUser($user);
+                $user->addFeed($feed);
+
+                return new JsonResponse($feed, 200);
+            } else {
+                return new JsonResponse([
+                    'message' => 'Feed already registered', 403
+                ]);
+            }
         }
     }
 
