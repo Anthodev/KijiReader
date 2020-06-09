@@ -90,6 +90,8 @@ class FeedController extends AbstractController
                 $feed->addUser($user);
                 $user->addFeed($feed);
 
+                $this->em->flush();
+
                 return new JsonResponse($feed, 200);
             } else {
                 return new JsonResponse([

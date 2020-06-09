@@ -291,7 +291,6 @@ export const actions = {
       .then(res => {
         dispatch('FETCH_NEWSFEED')
         dispatch('FETCH_FEEDS')
-        dispatch('FETCH_UNREAD_COUNT')
       })
       .catch(error => {
         console.log(error)
