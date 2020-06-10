@@ -2,7 +2,7 @@
   <div id="sidebar">
     <v-navigation-drawer v-model="drawer" width="13rem" app clipped>
       <v-list dense>
-        <v-list-item to="/" link nuxt exact>
+        <v-list-item @click="refreshNewsfeed">
           <v-list-item-action>
             <v-icon>mdi-home</v-icon>
           </v-list-item-action>
@@ -76,6 +76,10 @@ export default {
             }
           })
       }, 300000)
+    },
+
+    refreshNewsfeed() {
+      this.$store.dispatch('FETCH_NEWSFEED')
     }
   },
 
