@@ -151,10 +151,18 @@ export const actions = {
     commit,
     getters,
     dispatch
-  }, offset = 0) {
+  }, payload = null) {
     if (!getters.userToken) return
 
-    let data = await this.$axios.$get('/api/feed/newsfeed/' + offset)
+    let offset = 0
+    let id = 0
+
+    if (payload != null && payload.hasOwnProperty('offset')) offset = payload.offset
+    if (payload != null && payload.hasOwnProperty('id')) id = payload.id
+
+    let data = await this.$axios.$get('/api/feed/newsfeed/' + offset, {
+      feedId: id
+    })
       .then((res) => {
         if (offset === 0) {
           commit("SET_NEWSFEED", {

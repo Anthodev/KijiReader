@@ -14,6 +14,7 @@ export default {
     return {
       offset: 0,
       items: [],
+      id: 0
     }
   },
 
@@ -50,12 +51,20 @@ export default {
     this.items.length = 0
     this.offset = 0
     
-    const result = await this.$store.dispatch('FETCH_NEWSFEED', this.offset)
+    const result = await this.$store.dispatch('FETCH_NEWSFEED', {
+      offset: this.offset,
+      id: this.id
+    })
 
     this.offset = result.length
     this.items = result
 
     return result
   },
+
+  mounted() {
+    if (this.$route.params.id != null) this.id = this.$route.params.id
+    else this.id = 0
+  }
 }
 </script>
