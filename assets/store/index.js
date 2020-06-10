@@ -161,9 +161,7 @@ export const actions = {
             newsfeed: res
           })
 
-          if (res.length > 0) {
-            dispatch("FETCH_UNREAD_COUNT");
-          }
+          dispatch("FETCH_UNREAD_COUNT");
 
           return res
         } else {
@@ -291,6 +289,20 @@ export const actions = {
       .then(res => {
         dispatch('FETCH_NEWSFEED')
         dispatch('FETCH_FEEDS')
+      })
+      .catch(error => {
+        console.log(error)
+      })
+  },
+
+  async SET_MARK_FEED_AS_READ({
+    dispatch
+  }, id) {
+    if (!getters.userToken) return
+
+    return await this.$axios.$post('/api/feed/mark_read/' + id)
+      .then(res => {
+        dispatch("FETCH_NEWSFEED")
       })
       .catch(error => {
         console.log(error)

@@ -23,7 +23,7 @@
       </template>
 
       <v-toolbar collapse>
-        <v-btn icon>
+        <v-btn @click="markRead" icon>
           <v-icon>mdi-eye</v-icon>
         </v-btn>
 
@@ -72,6 +72,10 @@ export default {
   },
 
   methods: {
+    markRead() {
+      this.$store.dispatch('SET_MARK_FEED_AS_READ', this.feed.id)
+    },
+
     deleteFeed() {
       this.$store.dispatch('DELETE_FEED', this.feed.id)
       this.showOverlay = !this.showOverlay

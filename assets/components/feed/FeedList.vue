@@ -1,5 +1,6 @@
 <template>
     <div>
+      <p v-if="$fetchState.pending">Fetching newsfeed...</p>
       <app-news-card v-for="(news, $index) in items" :key="$index" :news="news" />
       <infinite-loading v-if="items.length" spinner="spiral" @infinite="loadMoreNews" />
     </div>
@@ -22,6 +23,12 @@ export default {
     }
   },
 
+  watch: {
+    newsfeed (newNewsfeed, oldnewsFeed) {
+      $nuxt.refresh()
+    }
+  },
+
   methods: {
     async loadMoreNews($state) {      
       const result = await this.$store.dispatch('FETCH_NEWSFEED', this.offset)
@@ -40,10 +47,15 @@ export default {
   },
 
   async fetch() {
+    this.items.length = 0
+    this.offset = 0
+    
     const result = await this.$store.dispatch('FETCH_NEWSFEED', this.offset)
 
     this.offset = result.length
     this.items = result
+
+    return result
   },
 }
 </script>

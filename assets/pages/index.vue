@@ -31,8 +31,7 @@ export default {
         type: ""
       })
     })
-
-    // this.$store.dispatch('FETCH_UNREAD_COUNT')
+    
     this.$store.dispatch('FETCH_FEEDS')
   }
 }

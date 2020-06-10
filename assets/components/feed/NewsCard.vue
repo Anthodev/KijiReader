@@ -40,7 +40,7 @@ export default {
   computed: {
     dateAgo() {
       return formatDistanceToNow(parseISO(this.news.story.date))
-    }
+    },
   },
 
   methods: {

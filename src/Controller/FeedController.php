@@ -102,6 +102,30 @@ class FeedController extends AbstractController
     }
 
     /**
+     * @Route("/mark_read/{id}", methods={"POST"})
+     * @IsGranted("IS_AUTHENTICATED_FULLY")
+     */
+    public function markRead($id)
+    {
+        $user = $this->getUser();
+
+        try {
+            $feed = $this->feedRepository->find($id);
+            $userStories = $this->userStoryRepository->findBy(['feed' => $feed, 'user' => $user]);
+
+            foreach ($userStories as $userStory) {
+                $userStory->setReadStatus(true);
+            }
+
+            $this->em->flush();
+
+            return new JsonResponse('success', 200);
+        } catch (Exception $e) {
+            return new JsonResponse($e, 500);
+        }
+    }
+
+    /**
      * @Route("/delete/{id}", methods={"POST"})
      * @IsGranted("IS_AUTHENTICATED_FULLY")
      */
