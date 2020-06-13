@@ -160,7 +160,7 @@ export const actions = {
     if (payload != null && payload.hasOwnProperty('offset')) offset = payload.offset
     if (payload != null && payload.hasOwnProperty('id')) id = payload.id
 
-    let data = await this.$axios.$get('/api/feed/newsfeed/' + offset, {
+    let data = await this.$axios.$post('/api/feed/newsfeed/' + offset, {
       feedId: id
     })
       .then((res) => {
@@ -196,8 +196,6 @@ export const actions = {
         feedUrl: formData.feedUrl
       })
       .then(res => {
-        console.log(res)
-
         dispatch('DELETE_SERVER_ERROR')
         dispatch('FETCH_FEEDS')
         dispatch('FETCH_NEWSFEED')

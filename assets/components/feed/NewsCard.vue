@@ -68,6 +68,6 @@ export default {
 
 <style lang="scss" scoped>
 .newsReadMarker {
-  box-shadow: -5px 0px 0px 0px darkred;
+  box-shadow: -5px 0px 0px 0px darkred !important;
 }
 </style>

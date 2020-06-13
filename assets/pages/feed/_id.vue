@@ -24,10 +24,10 @@ export default {
     appFeedAdd: () => import('../../components/shared/FeedAdd'),
   },
 
-  async mounted({ params }) {
+  async mounted() {
     this.$store.dispatch('FETCH_NEWSFEED', {
       offset: 0,
-      id: params.id
+      id: this.$route.params.id
     }).then(() => {
       this.$store.dispatch('SET_LOADING_STATE', {
         loading: false,

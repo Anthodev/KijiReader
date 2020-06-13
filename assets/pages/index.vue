@@ -25,7 +25,10 @@ export default {
   },
 
   async mounted() {
-    this.$store.dispatch('FETCH_NEWSFEED').then(() => {
+    this.$store.dispatch('FETCH_NEWSFEED', {
+      offset: 0,
+      id: this.$route.params.id
+    }).then(() => {
       this.$store.dispatch('SET_LOADING_STATE', {
         loading: false,
         type: ""

@@ -38,7 +38,7 @@ class StoryController extends AbstractController
     }
     
     /**
-     * @Route("/feed/newsfeed/{offset}", defaults={"offset"=0}, methods={"GET"})
+     * @Route("/feed/newsfeed/{offset}", defaults={"offset"=0}, methods={"POST"})
      */
     public function getNewsfeed(Request $request, $offset)
     {
@@ -49,10 +49,12 @@ class StoryController extends AbstractController
 
         $data = $request->getContent();
 
+        $userStories = null;
+
         if (!empty($data)) {
             $decodedData = \json_decode($data, true);
 
-            $feedId = $decodedData['feedId'];
+            if (isset($decodedData['feedId'])) $feedId = $decodedData['feedId'];
         }
 
         try {
@@ -65,6 +67,8 @@ class StoryController extends AbstractController
 
                     $this->em->flush();
                     $this->em->clear();
+
+                    $userStories = $this->userStoryRepository->findLimitedUserStories($user, $offset);
                 }
             } else {
                 $feed = $this->feedRepository->find($feedId);
@@ -73,9 +77,11 @@ class StoryController extends AbstractController
 
                 $this->em->flush();
                 $this->em->clear();
+
+                $userStories = $this->userStoryRepository->findLimitedUserStories($user, $offset, $feed);
             }
             
-            $userStories = $this->userStoryRepository->findLimitedUserStories($user, $offset);
+            // $userStories = $this->userStoryRepository->findLimitedUserStories($user, $offset);
 
             $serializeUserStories = $this->serializer->serialize($userStories, 'json', SerializationContext::create()->enableMaxDepthChecks());
 
