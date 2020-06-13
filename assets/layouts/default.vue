@@ -2,12 +2,12 @@
   <v-app id="app" v-if="auth">
     <v-skeleton-loader
       class="my-auto mx-auto"
-      :loading=loadingState.loading
+      :loading="loadingState.loading"
       transition-group="fade-transition"
       width="33%"
-      :type=loadingState.type
+      :type="loadingState.type"
     >
-      <v-content>
+      <v-main>
         <v-container id="content">
             <app-header />
             <app-sidebar />
@@ -16,7 +16,7 @@
             </v-row>
             <app-footer />
         </v-container>
-      </v-content>
+      </v-main>
     </v-skeleton-loader>
   </v-app>
   <v-app v-else>
@@ -68,7 +68,7 @@ export default {
       type: "card-heading, list-item@6, text"
     })
   }
-  }
+}
 </script>
 
 <style lang="stylus" scoped>

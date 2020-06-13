@@ -151,10 +151,18 @@ export const actions = {
     commit,
     getters,
     dispatch
-  }, offset = 0) {
+  }, payload = null) {
     if (!getters.userToken) return
 
-    let data = await this.$axios.$get('/api/feed/newsfeed/' + offset)
+    let offset = 0
+    let id = 0
+
+    if (payload != null && payload.hasOwnProperty('offset')) offset = payload.offset
+    if (payload != null && payload.hasOwnProperty('id')) id = payload.id
+
+    let data = await this.$axios.$post('/api/feed/newsfeed/' + offset, {
+      feedId: id
+    })
       .then((res) => {
         if (offset === 0) {
           commit("SET_NEWSFEED", {
@@ -188,8 +196,6 @@ export const actions = {
         feedUrl: formData.feedUrl
       })
       .then(res => {
-        console.log(res)
-
         dispatch('DELETE_SERVER_ERROR')
         dispatch('FETCH_FEEDS')
         dispatch('FETCH_NEWSFEED')

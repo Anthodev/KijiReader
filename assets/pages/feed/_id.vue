@@ -19,9 +19,9 @@ export default {
   },
 
   components: {
-    appFeedBar: () => import('../components/feed/FeedBar'),
-    appFeedList: () => import('../components/feed/FeedList'),
-    appFeedAdd: () => import('../components/shared/FeedAdd'),
+    appFeedBar: () => import('../../components/feed/FeedBar'),
+    appFeedList: () => import('../../components/feed/FeedList'),
+    appFeedAdd: () => import('../../components/shared/FeedAdd'),
   },
 
   async mounted() {

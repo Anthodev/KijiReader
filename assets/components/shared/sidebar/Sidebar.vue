@@ -2,7 +2,7 @@
   <div id="sidebar">
     <v-navigation-drawer v-model="drawer" width="13rem" app clipped>
       <v-list dense>
-        <v-list-item @click="refreshNewsfeed">
+        <v-list-item @click="refreshNewsfeed" to="/" exact link>
           <v-list-item-action>
             <v-icon>mdi-home</v-icon>
           </v-list-item-action>
@@ -79,7 +79,10 @@ export default {
     },
 
     refreshNewsfeed() {
-      this.$store.dispatch('FETCH_NEWSFEED')
+      this.$store.dispatch('FETCH_NEWSFEED', {
+        offset: 0,
+        id: this.$route.params.id
+      })
     }
   },
 
