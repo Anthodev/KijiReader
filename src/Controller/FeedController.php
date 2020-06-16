@@ -110,8 +110,14 @@ class FeedController extends AbstractController
         $user = $this->getUser();
 
         try {
-            $feed = $this->feedRepository->find($id);
-            $userStories = $this->userStoryRepository->findBy(['feed' => $feed, 'user' => $user]);
+            $userStories = null;
+
+            if ($id > 0) {
+                $feed = $this->feedRepository->find($id);
+                $userStories = $this->userStoryRepository->findBy(['feed' => $feed, 'user' => $user, 'readStatus' => false]);
+            } else {
+                $userStories = $this->userStoryRepository->findBy(['user' => $user, 'readStatus' => false]);
+            }
 
             foreach ($userStories as $userStory) {
                 $userStory->setReadStatus(true);

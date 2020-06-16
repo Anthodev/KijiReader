@@ -1,5 +1,5 @@
 <template>
-  <v-list-item :to="'/feed/' + id" link>
+  <v-list-item :to="'/feed/' + feed.id" link>
 
     <v-menu open-on-hover offset-x>
       <template v-slot:activator="{ on }">
@@ -56,8 +56,7 @@ export default {
 
   data() {
     return {
-      showOverlay: false,
-      id: this.feed.id
+      showOverlay: false
     }
   },
 
