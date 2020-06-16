@@ -50,6 +50,8 @@ class UserStoryRepository extends ServiceEntityRepository
             ->where('u.user = :user')
             ->andWhere('u.readStatus = false')
             ->setParameter('user', $user)
+            ->addOrderBy('f.name', 'ASC')
+            ->addOrderBy('unreadCount', 'DESC')
             ->getQuery()
             ->getResult()
         ;

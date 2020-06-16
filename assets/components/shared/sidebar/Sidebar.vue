@@ -13,7 +13,8 @@
             <v-list-item-title v-else>All elements</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <app-feed-item v-for="(feedItem, $index) in unreadList" :key="$index" :feed="feedItem" />
+        <app-feed-item v-for="(feedItem) in unreadList" :key="feedItem.id" :feed="feedItem" />
+        <app-feed-item v-for="(feedItem) in readFeeds" :key="feedItem.id" :feed="feedItem" />
       </v-list>
 
       <template v-slot:append>
@@ -28,6 +29,12 @@
 
 <script>
 export default {
+  data() {
+    return {
+      readFeeds: []
+    }
+  },
+
   computed: {
     checkAuth() {
       return this.$store.getters.isAuthenticated
@@ -35,6 +42,10 @@ export default {
 
     unreadAllCount() {
       return this.$store.getters.unreadAllCount
+    },
+
+    feeds() {
+      return this.$store.getters.feeds
     },
 
     unreadList() {
@@ -60,6 +71,12 @@ export default {
         $nuxt.refresh()
       }
     },
+
+    unreadList: function() {
+      this.feeds.forEach((el) => {
+        if (!this.unreadList.some(unread => unread.id === el.id)) this.readFeeds.push(el)
+      })
+    }
   },
 
   methods: {
@@ -86,6 +103,8 @@ export default {
             if (this.$store.getters.serverError != '') {
               this.$store.dispatch('DELETE_SERVER_ERROR')
             }
+
+            this.getReadFeeds()
           })
       }, 300000)
     },
