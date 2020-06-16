@@ -73,6 +73,8 @@ export default {
     },
 
     unreadList: function() {
+      this.readFeeds.length = 0
+
       this.feeds.forEach((el) => {
         if (!this.unreadList.some(unread => unread.id === el.id)) this.readFeeds.push(el)
       })
@@ -103,8 +105,6 @@ export default {
             if (this.$store.getters.serverError != '') {
               this.$store.dispatch('DELETE_SERVER_ERROR')
             }
-
-            this.getReadFeeds()
           })
       }, 300000)
     },
