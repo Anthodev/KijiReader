@@ -1,3 +1,4 @@
+export const strict = false
 export const state = () => ({
   drawer: true,
   usersCount: 0,
@@ -11,7 +12,8 @@ export const state = () => ({
   loadingState: {
     loading: false,
     type: ''
-  }
+  },
+  refreshStatus: false
 })
 
 export const mutations = {
@@ -41,7 +43,7 @@ export const mutations = {
   },
 
   SET_NEWSFEED(state, payload) {
-    state.newsfeed = []
+    state.newsfeed.splice(0)
     Array.prototype.push.apply(state.newsfeed, payload.newsfeed)
   },
 
@@ -60,6 +62,10 @@ export const mutations = {
 
   SET_FEEDS(state, payload) {
     state.feeds = payload.feeds
+  },
+
+  SET_REFRESH_STATUS(state, payload) {
+    state.refreshStatus = payload.refreshStatus
   }
 }
 
@@ -169,7 +175,8 @@ export const actions = {
             newsfeed: res
           })
 
-          dispatch("FETCH_UNREAD_COUNT");
+          dispatch("FETCH_UNREAD_COUNT")
+          dispatch('SET_REFRESH_STATUS', true)
 
           return res
         } else {
@@ -313,6 +320,16 @@ export const actions = {
       .catch(error => {
         console.log(error)
       })
+  },
+
+  SET_REFRESH_STATUS({
+    commit
+  }, refreshStatus) {
+    if (!getters.userToken) return
+
+    commit('SET_REFRESH_STATUS', {
+      refreshStatus: refreshStatus
+    })
   }
 }
 
@@ -359,5 +376,9 @@ export const getters = {
 
   feeds(state) {
     return state.feeds
+  },
+
+  refreshStatus(state) {
+    return state.refreshStatus
   }
 }

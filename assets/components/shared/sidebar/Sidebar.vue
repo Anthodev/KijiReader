@@ -13,7 +13,7 @@
             <v-list-item-title v-else>All elements</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <app-feed-item v-for="(feedItem, i) in unreadList" :key="i" :feed="feedItem" />
+        <app-feed-item v-for="(feedItem, $index) in unreadList" :key="$index" :feed="feedItem" />
       </v-list>
 
       <template v-slot:append>
@@ -41,6 +41,10 @@ export default {
       return this.$store.getters.unreadFeedList
     },
 
+    refreshStatus () {
+      return this.$store.getters.refreshStatus
+    },
+
     drawer: {
       get () {
         return this.$store.getters.drawer
@@ -48,6 +52,14 @@ export default {
 
       set() {}
     }
+  },
+
+  watch: {
+    refreshStatus (newRefreshStatus, oldRefreshStatus) {
+      if (newRefreshStatus) {
+        $nuxt.refresh()
+      }
+    },
   },
 
   methods: {
