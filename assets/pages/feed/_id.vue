@@ -46,8 +46,6 @@ export default {
     }).then(() => {
       this.dataLoading = false
     })
-    
-    this.$store.dispatch('FETCH_FEEDS')
   }
 }
 </script>

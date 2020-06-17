@@ -67,11 +67,14 @@ class User implements UserInterface, \Serializable
 
     /**
      * @ORM\OneToOne(targetEntity="App\Entity\Settings", mappedBy="user", cascade={"persist", "remove"}, fetch="EAGER")
+     * @Serializer\Expose
      */
     private $settings;
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Feed", mappedBy="users", fetch="EAGER")
+     * @Serializer\MaxDepth(1)
+     * @Serializer\Expose
      */
     private $feeds;
 
@@ -84,7 +87,7 @@ class User implements UserInterface, \Serializable
      * @ORM\OneToMany(targetEntity="App\Entity\UserStory", mappedBy="user", fetch="EAGER")
      * @ORM\OrderBy({"story" = "DESC"})
      * @Serializer\Expose
-     * @Serializer\MaxDepth(2)
+     * @Serializer\MaxDepth(1)
      */
     private $userStories;
 

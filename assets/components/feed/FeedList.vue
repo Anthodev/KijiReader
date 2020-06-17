@@ -19,8 +19,8 @@ export default {
   },
 
   computed: {
-    newsfeed () {
-      return this.$store.getters.newsfeed
+    filteredNewsfeed () {
+      return this.$store.getters.filteredNewsfeed
     },
 
     refreshStatus () {
@@ -44,16 +44,20 @@ export default {
 
   methods: {
     async loadMoreNews($state) {      
-      const result = await this.$store.dispatch('FETCH_NEWSFEED', {
-        offset: this.offset,
-        id: this.id
-      })
+      // const result = await this.$store.dispatch('FETCH_NEWSFEED', {
+      //   offset: this.offset,
+      //   id: this.id
+      // })
 
-      if (result.length > 0) {
-        result.forEach((item) => this.items.push(item))
-        this.offset += result.length
-        $state.loaded()
-      } else $state.complete()
+      setTimeout(() => {
+        const result = this.filteredNewsfeed.slice(this.offset, this.offset + 50)
+
+        if (result.length > 0) {
+          result.forEach((item) => this.items.push(item))
+          this.offset += result.length
+          $state.loaded()
+        } else $state.complete()
+      }, 1000)
     },
   },
 
@@ -65,8 +69,8 @@ export default {
   async fetch() {
     this.items.length = 0
 
-    while (this.items.length == 0 && this.newsfeed.length > 0) {
-      this.items = this.newsfeed
+    while (this.items.length == 0 && this.filteredNewsfeed.length > 0) {
+      this.items = this.filteredNewsfeed.slice(this.offset, this.offset + 50)
     }
 
     this.offset = this.items.length

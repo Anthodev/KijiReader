@@ -41,19 +41,12 @@ export default {
 
   async mounted() {
     this.dataLoading = true
-    this.$store.dispatch('FETCH_NEWSFEED', {
-      offset: 0,
-      id: this.$route.params.id
-    }).then(() => {
-      this.$store.dispatch('SET_LOADING_STATE', {
-        loading: false,
-        type: ""
-      })
-
-      this.dataLoading = false
+    this.$store.dispatch('SET_LOADING_STATE', {
+      loading: false,
+      type: ""
     })
-    
-    this.$store.dispatch('FETCH_FEEDS')
+
+    this.dataLoading = false
   }
 }
 </script>

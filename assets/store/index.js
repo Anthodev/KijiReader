@@ -6,6 +6,7 @@ export const state = () => ({
   user: null,
   serverError: '',
   newsfeed: [],
+  filtered_newsfeed: [],
   feeds: [],
   unreadAllCount: 0,
   unreadFeedList: [],
@@ -66,6 +67,10 @@ export const mutations = {
 
   SET_REFRESH_STATUS(state, payload) {
     state.refreshStatus = payload.refreshStatus
+  },
+
+  SET_FILTERED_NEWSFEED(state, payload) {
+    state.filtered_newsfeed = payload.filtered_newsfeed
   }
 }
 
@@ -139,15 +144,47 @@ export const actions = {
 
   async FETCH_USER({
     commit,
-    getters
+    getters,
+    dispatch
   }) {
     if (!getters.userToken) return
 
+    dispatch('SET_LOADING_STATE', {
+      loading: true,
+      type: 'card-heading, list-item@6, text'
+    })
+
     return await this.$axios.$get('/api/user/profile')
       .then(res => {
-        console.log(res)
         commit("SET_USER", {
           user: res
+        })
+
+        let sorted_stories = res.user_stories.sort(function(a, b) {
+          return new Date(b.story.date) - new Date(a.story.date)
+        })
+
+        commit('SET_NEWSFEED', {
+          newsfeed: sorted_stories
+        })
+
+        dispatch('FILTER_NEWSFEED').then((res) => {
+          commit('SET_FILTERED_NEWSFEED', {
+            filtered_newsfeed: res
+          })
+        })
+
+        commit('SET_FEEDS', {
+          feeds: res.feeds
+        })
+
+
+        dispatch("FETCH_UNREAD_COUNT")
+        dispatch('SET_REFRESH_STATUS', true)
+
+        dispatch('SET_LOADING_STATE', {
+          loading: false,
+          type: ""
         })
       })
       .catch(error => console.log(error))
@@ -175,10 +212,16 @@ export const actions = {
             newsfeed: res
           })
 
+          let filtered_res = dispatch('FILTER_NEWSFEED')
+
+          commit('SET_FILTERED_NEWSFEED', {
+            filtered_newsfeed: filtered_res
+          })
+
           dispatch("FETCH_UNREAD_COUNT")
           dispatch('SET_REFRESH_STATUS', true)
 
-          return res
+          return filtered_res
         } else {
           commit("SET_MORE_NEWSFEED", {
             newsfeed: res
@@ -247,6 +290,7 @@ export const actions = {
   },
 
   async FETCH_UNREAD_COUNT({
+    getters,
     commit,
     dispatch
   }) {
@@ -273,6 +317,7 @@ export const actions = {
   },
 
   async FETCH_FEEDS({
+    getters,
     commit,
     dispatch
   }) {
@@ -294,6 +339,7 @@ export const actions = {
   },
 
   async DELETE_FEED({
+    getters,
     dispatch
   }, id) {
     if (!getters.userToken) return
@@ -309,6 +355,7 @@ export const actions = {
   },
 
   async SET_MARK_FEED_AS_READ({
+    getters,
     dispatch
   }, id) {
     if (!getters.userToken) return
@@ -330,6 +377,23 @@ export const actions = {
     commit('SET_REFRESH_STATUS', {
       refreshStatus: refreshStatus
     })
+  },
+
+  FILTER_NEWSFEED({
+    getters
+  }) {
+    if (!getters.userToken) return
+
+    let filtered_newsfeed = []
+    let newsfeed = getters.newsfeed
+
+    if (!getters.user.settings.display_unread) {
+      newsfeed.forEach(el => {
+        if (el.read_status) filtered_newsfeed.push(el)
+      })
+
+      return filtered_newsfeed
+    } else return newsfeed
   }
 }
 
@@ -380,5 +444,9 @@ export const getters = {
 
   refreshStatus(state) {
     return state.refreshStatus
+  },
+
+  filteredNewsfeed(state) {
+    return state.filtered_newsfeed
   }
 }

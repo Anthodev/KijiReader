@@ -62,11 +62,6 @@ export default {
 
   async mounted() {
     if (this.$store.getters.user == null) this.fetchUser()
-
-    this.$store.dispatch('SET_LOADING_STATE', {
-      loading: true,
-      type: "card-heading, list-item@6, text"
-    })
   }
 }
 </script>
