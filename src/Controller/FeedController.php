@@ -185,26 +185,6 @@ class FeedController extends AbstractController
     }
 
     /**
-     * @Route("/get/{id}")
-     */
-    // public function getFeed($id)
-    // {
-    //     $user = $this->getUser();
-
-    //     try {
-    //         $feed = $this->feedRepository->find($id);
-
-    //         $this->feedHandler->processFeed($feed, $user);
-
-    //         $userStories = $this->userStoryRepository->findBy(['feed' => $feed, 'user' => $user], ['date' => 'DESC']);
-            
-    //         return new JsonResponse($userStories, 200);
-    //     } catch (Exception $e) {
-    //         return new JsonResponse(\json_encode($e), 403);
-    //     }
-    // }
-
-    /**
      * @Route("/get/unreadcount", methods={"GET"})
      * @IsGranted("IS_AUTHENTICATED_FULLY")
      */
