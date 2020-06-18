@@ -4,7 +4,7 @@
       class="my-auto mx-auto"
       :loading="loadingState.loading"
       transition-group="fade-transition"
-      width="75%"
+      width="50%"
       :type="loadingState.type"
     >
       <v-main>

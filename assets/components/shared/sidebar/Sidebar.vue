@@ -52,10 +52,6 @@ export default {
       return this.$store.getters.unreadFeedList
     },
 
-    refreshStatus () {
-      return this.$store.getters.refreshStatus
-    },
-
     drawer: {
       get () {
         return this.$store.getters.drawer
@@ -66,12 +62,6 @@ export default {
   },
 
   watch: {
-    refreshStatus (newRefreshStatus, oldRefreshStatus) {
-      if (newRefreshStatus) {
-        $nuxt.refresh()
-      }
-    },
-
     unreadList: function() {
       this.readFeeds.length = 0
 
@@ -110,9 +100,12 @@ export default {
     },
 
     refreshNewsfeed() {
+      this.$store.dispatch('SET_REFRESH_STATUS', true)
       this.$store.dispatch('FETCH_NEWSFEED', {
         offset: 0,
         id: 0
+      }).then(() => {
+        this.$store.dispatch('SET_REFRESH_STATUS', false)
       })
     }
   },

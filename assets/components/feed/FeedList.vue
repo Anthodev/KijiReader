@@ -41,12 +41,12 @@ export default {
     refreshStatus(newRefreshStatus, oldRefreshStatus) {
       if (newRefreshStatus) {
         this.dataLoading = true
+        // this.items = this.filteredNewsfeed
         $nuxt.refresh()
-        this.items = filteredNewsfeed
       } else {
         this.dataLoading = false
+        // this.items = this.filteredNewsfeed
         $nuxt.refresh()
-        this.items = filteredNewsfeed
       }
     }
   },
