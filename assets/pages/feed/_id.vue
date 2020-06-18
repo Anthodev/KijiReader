@@ -33,6 +33,14 @@ export default {
     }
   },
 
+  watch: {
+    newsfeed (newNewsfeed, oldNewsfeed) {
+      if (newNewsfeed) {
+        $nuxt.refresh()
+      }
+    },
+  },
+
   components: {
     appFeedBar: () => import('../../components/feed/FeedBar'),
     appFeedList: () => import('../../components/feed/FeedList'),
@@ -46,8 +54,6 @@ export default {
     }).then(() => {
       this.dataLoading = false
     })
-    
-    this.$store.dispatch('FETCH_FEEDS')
   }
 }
 </script>

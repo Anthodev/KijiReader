@@ -112,7 +112,7 @@ export default {
     refreshNewsfeed() {
       this.$store.dispatch('FETCH_NEWSFEED', {
         offset: 0,
-        id: this.$route.params.id
+        id: 0
       })
     }
   },

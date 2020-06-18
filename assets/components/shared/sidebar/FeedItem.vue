@@ -61,10 +61,6 @@ export default {
   },
 
   computed: {
-    feeds() {
-      return this.$store.getters.feeds
-    },
-
     feedIcon() {
       if (this.feed.logo == '') return ''
       else return this.feed.logo
@@ -73,7 +69,9 @@ export default {
 
   methods: {
     markRead() {
-      this.$store.dispatch('SET_MARK_FEED_AS_READ', this.feed.id)
+      this.$store.dispatch('SET_MARK_FEED_AS_READ', this.feed.id).then(() => {
+        $nuxt.refresh()
+      })
     },
 
     deleteFeed() {

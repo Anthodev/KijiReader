@@ -8,8 +8,10 @@ use App\Entity\User;
 use App\Entity\Settings;
 use App\Repository\RoleRepository;
 use App\Repository\UserRepository;
+use JMS\Serializer\SerializerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -26,12 +28,14 @@ class UserController extends AbstractController
     private $userRepository;
     private $roleRepository;
     private $em;
+    private $serializer;
     
-    public function __construct(UserRepository $userRepository, RoleRepository $roleRepository, EntityManagerInterface $em)
+    public function __construct(UserRepository $userRepository, RoleRepository $roleRepository, EntityManagerInterface $em, SerializerInterface $serializer)
     {
         $this->userRepository = $userRepository;
         $this->roleRepository = $roleRepository;
         $this->em = $em;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -161,11 +165,34 @@ class UserController extends AbstractController
     {
         $user = $this->getUser();
 
-        return new JsonResponse([
-            'id' => $user->getId(),
-            'username' => $user->getUsername(),
-            'email' => $user->getEmail(),
-            'role' => $user->getRole()->getName()
-        ], 200);
+        $serializedUser = $this->serializer->serialize($user, 'json');
+
+        $response = new Response($serializedUser);
+        $response->setStatusCode(Response::HTTP_OK);
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
+    }
+
+    /**
+     * @Route("/set_read_display", methods={"POST"})
+     * @IsGranted("IS_AUTHENTICATED_FULLY")
+     */
+    public function setDisplayRead()
+    {
+        $user = $this->getUser();
+
+        try {
+            $readStatus = $user->getSettings()->getDisplayUnread();
+            $readStatus = !$readStatus;
+
+            $user->getSettings()->setDisplayUnread($readStatus);
+
+            $this->em->flush();
+
+            return new JsonResponse('OK', 200);
+        } catch (Exception $e) {
+            return new JsonResponse(\json_encode($e), 403);
+        }
     }
 }

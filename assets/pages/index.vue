@@ -5,7 +5,7 @@
     transition-group="fade-transition"
     width="100%"
     type="list-item, list-item, list-item, list-item, list-item"
-    v-if="newsfeed.length > 0"
+    v-if="filteredNewsfeed.length > 0"
   >
     <v-row>
       <app-feed-bar class="col-12 ml-n1 mb-n2" />
@@ -28,9 +28,18 @@ export default {
   },
 
   computed: {
-    newsfeed() {
-      return this.$store.getters.newsfeed
+    filteredNewsfeed() {
+      return this.$store.getters.filteredNewsfeed
     }
+  },
+
+  watch: {
+    filteredNewsfeed (newFilteredNewsfeed, oldFilteredNewsfeed) {
+      if (newFilteredNewsfeed) {
+        $nuxt.refresh()
+        this.dataLoading = false
+      }
+    },
   },
 
   components: {
@@ -39,21 +48,25 @@ export default {
     appFeedAdd: () => import('../components/shared/FeedAdd'),
   },
 
-  async mounted() {
-    this.dataLoading = true
-    this.$store.dispatch('FETCH_NEWSFEED', {
-      offset: 0,
-      id: this.$route.params.id
-    }).then(() => {
-      this.$store.dispatch('SET_LOADING_STATE', {
-        loading: false,
-        type: ""
+  beforeRouteEnter (to, from, next) {
+    if (to != from && (from != '/signin' || from != '/signup')) {
+      next(vm => {
+        vm.dataLoading = true
       })
+    }
 
-      this.dataLoading = false
+    next(vm => {
+      vm.dataLoading = false
     })
-    
-    this.$store.dispatch('FETCH_FEEDS')
-  }
+  },
+
+  async mounted() {
+    this.$store.dispatch('SET_LOADING_STATE', {
+      loading: false,
+      type: ""
+    })
+
+    this.dataLoading = false
+  },
 }
 </script>

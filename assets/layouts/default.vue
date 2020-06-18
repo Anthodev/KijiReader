@@ -4,7 +4,7 @@
       class="my-auto mx-auto"
       :loading="loadingState.loading"
       transition-group="fade-transition"
-      width="33%"
+      width="75%"
       :type="loadingState.type"
     >
       <v-main>
@@ -62,11 +62,6 @@ export default {
 
   async mounted() {
     if (this.$store.getters.user == null) this.fetchUser()
-
-    this.$store.dispatch('SET_LOADING_STATE', {
-      loading: true,
-      type: "card-heading, list-item@6, text"
-    })
   }
 }
 </script>

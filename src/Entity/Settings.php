@@ -3,10 +3,12 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\SettingsRepository")
  * @ORM\HasLifecycleCallbacks()
+ * @Serializer\ExclusionPolicy("all")
  */
 class Settings
 {
@@ -22,26 +24,31 @@ class Settings
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Serializer\Expose
      */
     private $id;
 
     /**
      * @ORM\Column(type="integer")
+     * @Serializer\Expose
      */
     private $viewFeed;
 
     /**
      * @ORM\Column(type="integer")
+     * @Serializer\Expose
      */
     private $viewArticle;
 
     /**
      * @ORM\Column(type="integer")
+     * @Serializer\Expose
      */
     private $orderArticle;
 
     /**
      * @ORM\Column(type="boolean")
+     * @Serializer\Expose
      */
     private $displayUnread;
 

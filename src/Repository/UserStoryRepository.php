@@ -34,8 +34,6 @@ class UserStoryRepository extends ServiceEntityRepository
         }
 
         return $qb->orderBy('s.date', 'DESC')
-            ->setFirstResult($offset)
-            ->setMaxResults(50)
             ->getQuery()
             ->getResult()
         ;
