@@ -1,7 +1,7 @@
 <template>
   <v-row class="mt-7 mb-2 ml-1">
     <v-btn @click="markRead" :loading="loading" :disabled="disabled" class="mr-2" color="warning" normal>Mark everything as read</v-btn>
-    <v-btn @click="switchHideStatus()" v-if="currentHideStatus" class="mr-2" color="primary" normal>Hide read <v-icon right>mdi-eye-off</v-icon></v-btn>
+    <v-btn @click="switchHideStatus()" v-if="!currentHideStatus" class="mr-2" color="primary" normal>Hide read <v-icon right>mdi-eye-off</v-icon></v-btn>
     <v-btn @click="switchHideStatus()" v-else class="mr-2" color="primary" normal>Show read <v-icon right>mdi-eye</v-icon></v-btn>
     <!-- <v-select class="pa-0 col-3" :items="selectFilters" label="Show news since..." disabled solo dense hide-details></v-select> -->
   </v-row>

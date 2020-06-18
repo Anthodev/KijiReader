@@ -185,26 +185,6 @@ class FeedController extends AbstractController
     }
 
     /**
-     * @Route("/get/{id}")
-     */
-    // public function getFeed($id)
-    // {
-    //     $user = $this->getUser();
-
-    //     try {
-    //         $feed = $this->feedRepository->find($id);
-
-    //         $this->feedHandler->processFeed($feed, $user);
-
-    //         $userStories = $this->userStoryRepository->findBy(['feed' => $feed, 'user' => $user], ['date' => 'DESC']);
-            
-    //         return new JsonResponse($userStories, 200);
-    //     } catch (Exception $e) {
-    //         return new JsonResponse(\json_encode($e), 403);
-    //     }
-    // }
-
-    /**
      * @Route("/get/unreadcount", methods={"GET"})
      * @IsGranted("IS_AUTHENTICATED_FULLY")
      */
@@ -215,16 +195,16 @@ class FeedController extends AbstractController
         $response = null;
 
         try {
-            $feeds = $user->getFeeds();
+            // $feeds = $user->getFeeds();
 
-            if ($feeds->count() > 0) {
-                foreach ($feeds as $feed) {
-                    $this->feedHandler->processFeed($feed, $user);
-                }
+            // if ($feeds->count() > 0) {
+            //     foreach ($feeds as $feed) {
+            //         $this->feedHandler->processFeed($feed, $user);
+            //     }
 
-                $this->em->flush();
-                $this->em->clear();
-            }
+            //     $this->em->flush();
+            //     $this->em->clear();
+            // }
 
             $unreadFeeds = $this->userStoryRepository->countUnreadUserstoriesByFeed($user);
 
