@@ -1,0 +1,36 @@
+{
+    "name": "kijireader",
+    "version": "1.0.0",
+    "description": "A self-hosted newsfeed reader",
+    "author": "Cédric Anthony",
+    "private": true,
+    "license": "UNLICENSED",
+    "scripts": {
+        "dev": "NUXT_HOST=0.0.0.0 nuxt",
+        "build": "nuxt build",
+        "start": "nuxt start",
+        "generate": "nuxt generate",
+        "dev-server": "encore dev-server",
+        "watch": "encore dev --watch",
+        "dev-debug": "node --inspect node_modules/.bin/nuxt"
+    },
+    "dependencies": {
+        "@nuxtjs/axios": "^5.9.5",
+        "@nuxtjs/proxy": "^1.3.3",
+        "@nuxtjs/toast": "^3.3.0",
+        "date-fns": "^2.12.0",
+        "lru-cache": "^5.1.1",
+        "nuxt": "^2.11.0",
+        "stylus": "^0.54.7",
+        "stylus-loader": "^3.0.2",
+        "vue-infinite-loading": "^2.4.5",
+        "vuelidate": "^0.7.5"
+    },
+    "devDependencies": {
+        "@babel/preset-stage-2": "^7.8.3",
+        "@nuxtjs/date-fns": "^1.2.0",
+        "@nuxtjs/vuetify": "^1.11.0",
+        "@symfony/webpack-encore": "^0.28.3",
+        "webpack-notifier": "^1.6.0"
+    }
+}
