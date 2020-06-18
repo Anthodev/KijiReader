@@ -195,16 +195,16 @@ class FeedController extends AbstractController
         $response = null;
 
         try {
-            $feeds = $user->getFeeds();
+            // $feeds = $user->getFeeds();
 
-            if ($feeds->count() > 0) {
-                foreach ($feeds as $feed) {
-                    $this->feedHandler->processFeed($feed, $user);
-                }
+            // if ($feeds->count() > 0) {
+            //     foreach ($feeds as $feed) {
+            //         $this->feedHandler->processFeed($feed, $user);
+            //     }
 
-                $this->em->flush();
-                $this->em->clear();
-            }
+            //     $this->em->flush();
+            //     $this->em->clear();
+            // }
 
             $unreadFeeds = $this->userStoryRepository->countUnreadUserstoriesByFeed($user);
 
