@@ -14,6 +14,7 @@ export const state = () => ({
     loading: false,
     type: ''
   },
+  refreshStatus: false
 })
 
 export const mutations = {
@@ -67,6 +68,10 @@ export const mutations = {
   SET_FILTERED_NEWSFEED(state, payload) {
     state.filtered_newsfeed.splice(0)
     state.filtered_newsfeed = payload.filtered_newsfeed
+  },
+
+  SET_REFRESH_STATUS(state, payload) {
+    state.refreshStatus = payload.status
   }
 }
 
@@ -142,13 +147,15 @@ export const actions = {
     commit,
     getters,
     dispatch
-  }) {
+  }, skip = false) {
     if (!getters.userToken) return
 
-    dispatch('SET_LOADING_STATE', {
-      loading: true,
-      type: 'card-heading, list-item@6, text'
-    })
+    if (skip === false) {
+      dispatch('SET_LOADING_STATE', {
+        loading: true,
+        type: 'card-heading, list-item@6, text'
+      })
+    }
 
     return await this.$axios.$get('/api/user/profile')
       .then(res => {
@@ -156,21 +163,24 @@ export const actions = {
           user: res
         })
 
-        let sorted_stories = res.user_stories.sort(function(a, b) {
-          return new Date(b.story.date) - new Date(a.story.date)
-        })
+        if (skip === false) {
+          let sorted_stories = res.user_stories.sort(function (a, b) {
+            return new Date(b.story.date) - new Date(a.story.date)
+          })
 
-        commit('SET_NEWSFEED', {
-          newsfeed: sorted_stories
-        })
+          commit('SET_NEWSFEED', {
+            newsfeed: sorted_stories
+          })
 
-        dispatch('FILTER_NEWSFEED')
+          dispatch('FILTER_NEWSFEED')
 
-        commit('SET_FEEDS', {
-          feeds: res.feeds
-        })
+          commit('SET_FEEDS', {
+            feeds: res.feeds
+          })
 
-        dispatch("FETCH_UNREAD_COUNT")
+          dispatch("FETCH_UNREAD_COUNT")
+        }
+
         dispatch('SET_LOADING_STATE', {
           loading: false,
           type: ""
@@ -358,21 +368,35 @@ export const actions = {
 
   FILTER_NEWSFEED({
     getters,
-    commit
-  }) {
+    commit,
+    dispatch
+  }, hide = null) {
     if (!getters.userToken) return
 
     let filtered_newsfeed = []
     let newsfeed = getters.newsfeed
+    let hideStatus = hide
 
-    if (!getters.user.settings.display_unread) {
+    if (hideStatus == null) getters.user.settings.display_unread
+
+    dispatch('SET_REFRESH_STATUS', true)
+
+    if (hideStatus === false) {
       newsfeed.forEach(el => {
-        if (el.read_status) filtered_newsfeed.push(el)
+        if (el.read_status == false) filtered_newsfeed.push(el)
       })
 
       commit('SET_FILTERED_NEWSFEED', {
         filtered_newsfeed: filtered_newsfeed
       })
+
+      if (getters.user.settings.display_unread != hide && hide != null) {
+        this.$axios.$post('/api/user/set_read_display').then(() => {
+          dispatch('FETCH_USER', true)
+        })
+      }
+
+      dispatch('SET_REFRESH_STATUS', false)
 
       return filtered_newsfeed
     } else {
@@ -386,8 +410,27 @@ export const actions = {
         filtered_newsfeed: filtered_newsfeed
       })
 
+      if (getters.user.settings.display_unread != hide && hide != null) {
+        this.$axios.$post('/api/user/set_read_display').then(() => {
+          dispatch('FETCH_USER', true)
+        })
+      }
+
+      dispatch('SET_REFRESH_STATUS', false)
+
       return filtered_newsfeed
     }
+  },
+
+  SET_REFRESH_STATUS({
+    getters,
+    commit
+  }, status) {
+    if (!getters.userToken) return
+
+    commit('SET_REFRESH_STATUS', {
+      status: status
+    })
   }
 }
 
@@ -438,5 +481,9 @@ export const getters = {
 
   filteredNewsfeed(state) {
     return state.filtered_newsfeed
+  },
+
+  refreshStatus(state) {
+    return state.refreshStatus
   }
 }

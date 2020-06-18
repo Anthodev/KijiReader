@@ -33,7 +33,6 @@ export default {
   data() {
     return {
       show: false,
-      attachReadMarker: this.news.read_status,
     }
   },
 
@@ -41,6 +40,10 @@ export default {
     dateAgo() {
       return formatDistanceToNow(parseISO(this.news.story.date))
     },
+
+    attachReadMarker() {
+      return this.news.read_status
+    }
   },
 
   methods: {

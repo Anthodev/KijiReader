@@ -5,7 +5,7 @@
     transition-group="fade-transition"
     width="100%"
     type="list-item, list-item, list-item, list-item, list-item"
-    v-if="newsfeed.length > 0"
+    v-if="filteredNewsfeed.length > 0"
   >
     <v-row>
       <app-feed-bar class="col-12 ml-n1 mb-n2" />
@@ -28,14 +28,14 @@ export default {
   },
 
   computed: {
-    newsfeed() {
-      return this.$store.getters.newsfeed
+    filteredNewsfeed() {
+      return this.$store.getters.filteredNewsfeed
     }
   },
 
   watch: {
-    newsfeed (newNewsfeed, oldNewsfeed) {
-      if (newNewsfeed) {
+    filteredNewsfeed (newFilteredNewsfeed, oldFilteredNewsfeed) {
+      if (newFilteredNewsfeed) {
         $nuxt.refresh()
         this.dataLoading = false
       }

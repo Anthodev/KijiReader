@@ -69,7 +69,9 @@ export default {
 
   methods: {
     markRead() {
-      this.$store.dispatch('SET_MARK_FEED_AS_READ', this.feed.id)
+      this.$store.dispatch('SET_MARK_FEED_AS_READ', this.feed.id).then(() => {
+        $nuxt.refresh()
+      })
     },
 
     deleteFeed() {

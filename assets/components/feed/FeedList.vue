@@ -1,8 +1,17 @@
 <template>
+  <v-skeleton-loader
+    class="my-auto mx-auto"
+    :loading="dataLoading"
+    transition-group="fade-transition"
+    width="100%"
+    type="list-item, list-item, list-item, list-item, list-item"
+    v-if="filteredNewsfeed.length > 0"
+  >
     <div>
       <app-news-card v-for="(news, $index) in items" :key="$index" :news="news" />
       <infinite-loading v-if="items.length > 0" spinner="spiral" @infinite="loadMoreNews" />
     </div>
+  </v-skeleton-loader>
 </template>
 
 <script>
@@ -14,7 +23,7 @@ export default {
       offset: 0,
       items: [],
       id: null,
-      dataLoading: true
+      dataLoading: false
     }
   },
 
@@ -22,6 +31,24 @@ export default {
     filteredNewsfeed () {
       return this.$store.getters.filteredNewsfeed
     },
+
+    refreshStatus() {
+      return this.$store.getters.refreshStatus
+    }
+  },
+
+  watch: {
+    refreshStatus(newRefreshStatus, oldRefreshStatus) {
+      if (newRefreshStatus) {
+        this.dataLoading = true
+        $nuxt.refresh()
+        this.items = filteredNewsfeed
+      } else {
+        this.dataLoading = false
+        $nuxt.refresh()
+        this.items = filteredNewsfeed
+      }
+    }
   },
 
   methods: {
@@ -45,6 +72,7 @@ export default {
 
   async fetch() {
     this.items.length = 0
+    this.offset = 0
 
     while (this.items.length == 0 && this.filteredNewsfeed.length > 0) {
       this.items = this.filteredNewsfeed.slice(this.offset, this.offset + 50)
@@ -54,6 +82,8 @@ export default {
 
     if (this.$route.params.id == undefined) this.id = this.$route.params.id
     else this.id = 0
+
+    this.dataLoading = false
 
     return result
   },

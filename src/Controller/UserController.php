@@ -173,4 +173,26 @@ class UserController extends AbstractController
 
         return $response;
     }
+
+    /**
+     * @Route("/set_read_display", methods={"POST"})
+     * @IsGranted("IS_AUTHENTICATED_FULLY")
+     */
+    public function setDisplayRead()
+    {
+        $user = $this->getUser();
+
+        try {
+            $readStatus = $user->getSettings()->getDisplayUnread();
+            $readStatus = !$readStatus;
+
+            $user->getSettings()->setDisplayUnread($readStatus);
+
+            $this->em->flush();
+
+            return new JsonResponse('OK', 200);
+        } catch (Exception $e) {
+            return new JsonResponse(\json_encode($e), 403);
+        }
+    }
 }
