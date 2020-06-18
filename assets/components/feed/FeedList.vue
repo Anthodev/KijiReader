@@ -22,33 +22,10 @@ export default {
     filteredNewsfeed () {
       return this.$store.getters.filteredNewsfeed
     },
-
-    refreshStatus () {
-      return this.$store.getters.refreshStatus
-    }
-  },
-
-  watch: {
-    refreshStatus (newRefreshStatus, oldRefreshStatus) {
-      if (newRefreshStatus) {
-        $nuxt.refresh()
-        this.$store.dispatch('SET_REFRESH_STATUS', false)
-      }
-    },
-
-    items: function() {
-      if (this.items.length == 0) this.dataLoading = true
-      else this.dataLoading = false
-    }
   },
 
   methods: {
-    async loadMoreNews($state) {      
-      // const result = await this.$store.dispatch('FETCH_NEWSFEED', {
-      //   offset: this.offset,
-      //   id: this.id
-      // })
-
+    async loadMoreNews($state) {
       setTimeout(() => {
         const result = this.filteredNewsfeed.slice(this.offset, this.offset + 50)
 
@@ -77,8 +54,6 @@ export default {
 
     if (this.$route.params.id == undefined) this.id = this.$route.params.id
     else this.id = 0
-
-    this.dataLoading = false
 
     return result
   },

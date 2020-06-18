@@ -33,6 +33,14 @@ export default {
     }
   },
 
+  watch: {
+    newsfeed (newNewsfeed, oldNewsfeed) {
+      if (newNewsfeed) {
+        $nuxt.refresh()
+      }
+    },
+  },
+
   components: {
     appFeedBar: () => import('../../components/feed/FeedBar'),
     appFeedList: () => import('../../components/feed/FeedList'),

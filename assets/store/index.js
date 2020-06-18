@@ -14,7 +14,6 @@ export const state = () => ({
     loading: false,
     type: ''
   },
-  refreshStatus: false
 })
 
 export const mutations = {
@@ -65,11 +64,8 @@ export const mutations = {
     state.feeds = payload.feeds
   },
 
-  SET_REFRESH_STATUS(state, payload) {
-    state.refreshStatus = payload.refreshStatus
-  },
-
   SET_FILTERED_NEWSFEED(state, payload) {
+    state.filtered_newsfeed.splice(0)
     state.filtered_newsfeed = payload.filtered_newsfeed
   }
 }
@@ -168,20 +164,13 @@ export const actions = {
           newsfeed: sorted_stories
         })
 
-        dispatch('FILTER_NEWSFEED').then((res) => {
-          commit('SET_FILTERED_NEWSFEED', {
-            filtered_newsfeed: res
-          })
-        })
+        dispatch('FILTER_NEWSFEED')
 
         commit('SET_FEEDS', {
           feeds: res.feeds
         })
 
-
         dispatch("FETCH_UNREAD_COUNT")
-        dispatch('SET_REFRESH_STATUS', true)
-
         dispatch('SET_LOADING_STATE', {
           loading: false,
           type: ""
@@ -212,16 +201,14 @@ export const actions = {
             newsfeed: res
           })
 
-          let filtered_res = dispatch('FILTER_NEWSFEED')
-
-          commit('SET_FILTERED_NEWSFEED', {
-            filtered_newsfeed: filtered_res
+          dispatch('FILTER_NEWSFEED')
+          dispatch("FETCH_UNREAD_COUNT")
+          dispatch('SET_LOADING_STATE', {
+            loading: false,
+            type: ""
           })
 
-          dispatch("FETCH_UNREAD_COUNT")
-          dispatch('SET_REFRESH_STATUS', true)
-
-          return filtered_res
+          return res
         } else {
           commit("SET_MORE_NEWSFEED", {
             newsfeed: res
@@ -369,18 +356,9 @@ export const actions = {
       })
   },
 
-  SET_REFRESH_STATUS({
-    commit
-  }, refreshStatus) {
-    if (!getters.userToken) return
-
-    commit('SET_REFRESH_STATUS', {
-      refreshStatus: refreshStatus
-    })
-  },
-
   FILTER_NEWSFEED({
-    getters
+    getters,
+    commit
   }) {
     if (!getters.userToken) return
 
@@ -392,8 +370,24 @@ export const actions = {
         if (el.read_status) filtered_newsfeed.push(el)
       })
 
+      commit('SET_FILTERED_NEWSFEED', {
+        filtered_newsfeed: filtered_newsfeed
+      })
+
       return filtered_newsfeed
-    } else return newsfeed
+    } else {
+      let filtered_newsfeed = []
+
+      getters.newsfeed.forEach(el => {
+        filtered_newsfeed.push(el)
+      })
+
+      commit('SET_FILTERED_NEWSFEED', {
+        filtered_newsfeed: filtered_newsfeed
+      })
+
+      return filtered_newsfeed
+    }
   }
 }
 
@@ -440,10 +434,6 @@ export const getters = {
 
   feeds(state) {
     return state.feeds
-  },
-
-  refreshStatus(state) {
-    return state.refreshStatus
   },
 
   filteredNewsfeed(state) {

@@ -33,20 +33,40 @@ export default {
     }
   },
 
+  watch: {
+    newsfeed (newNewsfeed, oldNewsfeed) {
+      if (newNewsfeed) {
+        $nuxt.refresh()
+        this.dataLoading = false
+      }
+    },
+  },
+
   components: {
     appFeedBar: () => import('../components/feed/FeedBar'),
     appFeedList: () => import('../components/feed/FeedList'),
     appFeedAdd: () => import('../components/shared/FeedAdd'),
   },
 
+  beforeRouteEnter (to, from, next) {
+    if (to != from && (from != '/signin' || from != '/signup')) {
+      next(vm => {
+        vm.dataLoading = true
+      })
+    }
+
+    next(vm => {
+      vm.dataLoading = false
+    })
+  },
+
   async mounted() {
-    this.dataLoading = true
     this.$store.dispatch('SET_LOADING_STATE', {
       loading: false,
       type: ""
     })
 
     this.dataLoading = false
-  }
+  },
 }
 </script>

@@ -61,10 +61,6 @@ export default {
   },
 
   computed: {
-    feeds() {
-      return this.$store.getters.feeds
-    },
-
     feedIcon() {
       if (this.feed.logo == '') return ''
       else return this.feed.logo
