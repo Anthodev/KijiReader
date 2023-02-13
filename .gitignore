@@ -78,3 +78,11 @@ yarn.lock
 
 # Removed vscode config files
 /.vscode
+/.idea
+/.env
+/.env.*
+!/.env.dist
+###> phpunit/phpunit ###
+/phpunit.xml
+.phpunit.result.cache
+###< phpunit/phpunit ###
